@@ -25,7 +25,7 @@ export function useDataMigration() {
     
     const migratedWallets = allWallets
       .map(wallet => {
-        let updated = { ...wallet }
+        const updated = { ...wallet }
         
         if (typeof wallet.balance !== 'number') {
           updated.balance = 0
