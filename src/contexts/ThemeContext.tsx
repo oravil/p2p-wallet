@@ -1,12 +1,12 @@
 import { createContext, useContext, ReactNode, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 
-  theme: Theme
+type Theme = 'light' | 'dark';
 
-
-  theme: Theme
-  setTheme: (theme: Theme) => void
-  toggleTheme: () => void
+interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }
 
   const toggleTheme = () => {
-  }
+    setThemeKV(theme === 'light' ? 'dark' : 'light')
   }
 
   return (
@@ -34,12 +34,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       {children}
     </ThemeContext.Provider>
   )
+}
 
-
-
+export function useTheme() {
   const context = useContext(ThemeContext)
-
+  if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider')
-
+  }
   return context
 }
