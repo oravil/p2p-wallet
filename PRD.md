@@ -13,11 +13,11 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 ## Essential Features
 
 ### User Authentication & Authorization
-- **Functionality**: Register, login, logout with JWT-based session management and role-based access control
+- **Functionality**: Register, login, logout with JWT-based session management and role-based access control. First registered user automatically becomes admin with pro subscription.
 - **Purpose**: Secure access to sensitive financial data and enable admin capabilities
 - **Trigger**: Landing page with login/register forms, or admin accessing restricted routes
-- **Progression**: Enter credentials → validate → generate JWT → store token → redirect to dashboard
-- **Success criteria**: Users can only access their own wallet data; admins can view all users; tokens expire appropriately
+- **Progression**: Enter credentials → validate → generate JWT → store token → redirect to dashboard → first user gets admin role and pro subscription automatically
+- **Success criteria**: Users can only access their own wallet data; admins can view all users; tokens expire appropriately; first account is admin with full control
 
 ### Wallet & Bank Account Management
 - **Functionality**: Add/edit/delete multiple e-wallets (Vodafone Cash, Orange, Etisalat, InstaPay) and bank accounts with custom daily/monthly limits
@@ -55,11 +55,11 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 - **Success criteria**: All text translates correctly, layouts flip appropriately, preference persists across sessions
 
 ### Admin Panel
-- **Functionality**: User management (view, approve, suspend, ban), global limit configuration, statistics dashboard, subscription management
-- **Purpose**: Enable platform oversight and customer support operations
-- **Trigger**: Admin user logs in and navigates to admin routes
-- **Progression**: Admin dashboard → select user management → view list → filter/search → perform action → confirmation → update database
-- **Success criteria**: Only admin role can access panel, all actions persist correctly, changes reflect immediately
+- **Functionality**: User management (view, edit status, suspend, ban, delete), subscription management (upgrade/downgrade users), view all user wallets and transactions, global statistics dashboard
+- **Purpose**: Enable platform oversight, customer support operations, and full administrative control
+- **Trigger**: Admin user logs in and navigates to admin tab (visible only to admin role)
+- **Progression**: Admin dashboard → view statistics → select user management → view user list with details → click edit → modify status/subscription → view wallets/transactions → confirm changes → delete users if needed → changes persist immediately
+- **Success criteria**: Only admin role can access panel, all actions persist correctly, changes reflect immediately, admins can view and manage all users' data, delete users with cascade deletion of wallets and transactions, cannot edit or delete themselves
 
 ### Daily/Monthly Summary & Reports
 - **Functionality**: Aggregated view of all transactions across all wallets showing totals, patterns, and limit compliance

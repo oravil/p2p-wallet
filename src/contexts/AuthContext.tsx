@@ -37,13 +37,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false
     }
 
+    const isFirstUser = !users || users.length === 0
+
     const newUser: User = {
       id: generateId(),
       email,
       fullName,
-      role: 'trader',
+      role: isFirstUser ? 'admin' : 'trader',
       status: 'active',
-      subscription: 'free',
+      subscription: isFirstUser ? 'pro' : 'free',
       createdAt: new Date().toISOString()
     }
 
