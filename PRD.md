@@ -1,10 +1,10 @@
 # P2P Wallet Manager - Product Requirements Document
 
-A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage e-wallets and bank accounts, monitor transaction limits, and prevent account freezes through intelligent limit tracking.
+A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage e-wallets and bank accounts, monitor transaction limits, and prevent account freezes through intelligent limit tracking with advanced search, import/export, and transaction history features.
 
 **Experience Qualities**:
 1. **Trustworthy**: Clear, accurate limit tracking with visual indicators that give traders confidence in their transaction safety
-2. **Efficient**: Quick transaction logging and instant feedback on remaining limits so traders can act fast in P2P markets
+2. **Efficient**: Quick transaction logging with instant search by phone number (4+ digits), bulk import, and instant feedback on remaining limits so traders can act fast in P2P markets
 3. **Professional**: Polished bilingual interface that respects Arabic RTL layout and English LTR, making it accessible to all Egyptian traders
 
 **Complexity Level**: Complex Application (advanced functionality, accounts)
@@ -20,18 +20,39 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 - **Success criteria**: Admin can access all features; password must be changed on first login; new password must be at least 6 characters
 
 ### Wallet & Bank Account Management
-- **Functionality**: Add/edit/delete multiple e-wallets (Vodafone Cash, Orange, Etisalat, InstaPay) and bank accounts with customizable daily/monthly limits. Default limits are automatically populated based on wallet type: Mobile wallets (60K daily, 200K monthly), InstaPay/Bank (70K per transaction, 120K daily, 400K monthly). Admin can modify default limits from admin panel.
-- **Purpose**: Centralize all payment methods with intelligent default limits that match Egyptian banking regulations
-- **Trigger**: Dashboard "Add Wallet" or "Add Bank Account" button
-- **Progression**: Click add → select wallet type → defaults auto-populate → optionally adjust limits → enter account details → save → appears in dashboard list
-- **Success criteria**: All wallets display with correct limits, defaults match wallet type, traders can customize limits, admin can change system defaults, data persists between sessions
+- **Functionality**: Add/edit/delete multiple e-wallets (Vodafone Cash, Orange, Etisalat, InstaPay) and bank accounts with customizable daily/monthly limits. Default limits are automatically populated based on wallet type: Mobile wallets (60K daily, 200K monthly), InstaPay/Bank (70K per transaction, 120K daily, 400K monthly). Account names are optional - if left blank, auto-generates mask from mobile number (e.g., vf-012345, or-098765). Mobile numbers must be unique across all wallets to prevent duplicates. Admin can modify default limits from admin panel. Edit wallet balance and limits after creation.
+- **Purpose**: Centralize all payment methods with intelligent default limits that match Egyptian banking regulations, with unique mobile number validation preventing duplicate accounts
+- **Trigger**: Dashboard "Add Wallet" button, or "Edit" button on wallet card
+- **Progression**: Click add → select wallet type → defaults auto-populate → enter mobile number (validated for uniqueness) → optionally enter name (or leave blank for auto-generated mask) → optionally adjust limits → enter balance → save → appears in dashboard list with real-time updates
+- **Success criteria**: All wallets display with correct limits and real-time balance updates, defaults match wallet type, traders can customize limits, admin can change system defaults, data persists between sessions, duplicate mobile numbers are prevented, account name auto-generates if left blank (format: company-code + last 6 digits), wallet editing works correctly
+
+### Quick Search & Filtering
+- **Functionality**: Real-time search across all wallets by entering any 4+ digits of phone number or account name. Instantly filters visible wallets as you type, showing only matching accounts.
+- **Purpose**: Enable traders to quickly find specific wallets in large collections without scrolling through cards
+- **Trigger**: Type in search box in dashboard header
+- **Progression**: Enter 4+ digits → system searches phone numbers and names → matching wallets displayed → clear search to show all
+- **Success criteria**: Search works with partial phone numbers (4+ digits), updates results instantly, searches both phone and name fields, works in both Arabic and English
+
+### Bulk Import & Export
+- **Functionality**: Import multiple wallet phone numbers from text input (one per line) or CSV file (with optional name and type columns). Export all wallets and transactions to CSV format for backup or analysis. CSV import supports columns: phone/number/mobile (required), name (optional), type (optional).
+- **Purpose**: Save time when adding many wallets, enable data backup and external analysis
+- **Trigger**: "Import" button in dashboard, "Export" button for wallets or transactions
+- **Progression**: Import: Click import → choose text or CSV tab → select wallet type → paste numbers/data → validate uniqueness → import with auto-generated names → Exports: Click export → CSV file downloads with timestamp
+- **Success criteria**: Text import accepts one phone per line, CSV import parses correctly with flexible column names, duplicate numbers are skipped with count shown, account names auto-generate for blank entries, export includes all relevant data, files download with descriptive names
+
+### Transaction History Viewer
+- **Functionality**: Per-wallet transaction history with search by description/amount, filter by type (all/send/receive), summary statistics (total sent/received/net), and CSV export. Displays transactions in reverse chronological order with clear visual distinction between sent (red) and received (green) transactions.
+- **Purpose**: Review transaction patterns, identify specific transactions, export for record-keeping
+- **Trigger**: "History" button on wallet card
+- **Progression**: Click history → view transaction list with summary stats → use search or filter → optionally export filtered results to CSV
+- **Success criteria**: All transactions for wallet displayed, search works on description and amount, filters apply instantly, statistics update based on filters, export includes filtered data only
 
 ### Transaction Tracking
-- **Functionality**: Manual entry of sent/received transactions with real-time calculation of daily and monthly totals against limits, including automated warnings at 80% usage
-- **Purpose**: Monitor transaction volume to prevent exceeding limits that trigger account freezes
-- **Trigger**: "Add Transaction" button on wallet card
-- **Progression**: Select wallet → choose send/receive → enter amount → submit → updates totals → recalculates remaining limits → shows visual feedback → triggers toast notification if 80%+ threshold reached
-- **Success criteria**: Totals update instantly, warnings appear when approaching limits (80%+), error alerts when exceeding limits, toast notifications persist for appropriate duration
+- **Functionality**: Manual entry of sent/received transactions with real-time calculation of daily and monthly totals against limits, including automated warnings at 80% usage. Balance updates automatically with each transaction (added for receive, subtracted for send).
+- **Purpose**: Monitor transaction volume to prevent exceeding limits that trigger account freezes, maintain accurate running balance
+- **Trigger**: "Add Transaction" (+) button on wallet card
+- **Progression**: Select wallet → choose send/receive → enter amount → submit → balance updates instantly → totals recalculate → remaining limits adjust → shows visual feedback → triggers toast notification if 80%+ threshold reached
+- **Success criteria**: Totals update instantly with real-time reactivity, balance reflects all transactions accurately, warnings appear when approaching limits (80%+), error alerts when exceeding limits, toast notifications persist for appropriate duration, data syncs across all views immediately
 
 ### Automated Limit Warnings
 - **Functionality**: Real-time monitoring of wallet limit usage with automatic toast notifications when reaching 80% of daily or monthly limits

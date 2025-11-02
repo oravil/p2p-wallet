@@ -130,3 +130,83 @@ export function getProgressColor(percentage: number): string {
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
+
+export function generateAccountMask(accountNumber: string, walletType: string): string {
+  const prefixes: Record<string, string> = {
+    vodafone: 'vf',
+    orange: 'or',
+    etisalat: 'et',
+    instapay: 'ip',
+    bank: 'bn'
+  }
+  
+  const prefix = prefixes[walletType.toLowerCase()] || 'wt'
+  const digits = accountNumber.replace(/\D/g, '').slice(-6)
+  
+  return `${prefix}-${digits || '000000'}`
+}
+
+export function normalizePhoneNumber(phone: string): string {
+  return phone.replace(/\D/g, '')
+}
+
+export function searchPhoneNumber(query: string, phone: string): boolean {
+  const normalizedQuery = query.replace(/\D/g, '')
+  const normalizedPhone = phone.replace(/\D/g, '')
+  
+  if (normalizedQuery.length < 4) return false
+  
+  return normalizedPhone.includes(normalizedQuery)
+}
+
+export function exportToCSV(data: any[], filename: string) {
+  if (data.length === 0) return
+  
+  const headers = Object.keys(data[0])
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => 
+      headers.map(header => {
+        const value = row[header]
+        if (typeof value === 'string' && value.includes(',')) {
+          return `"${value}"`
+        }
+        return value
+      }).join(',')
+    )
+  ].join('\n')
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  
+  link.setAttribute('href', url)
+  link.setAttribute('download', filename)
+  link.style.visibility = 'hidden'
+  
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+export function parseCSVLine(line: string): string[] {
+  const result: string[] = []
+  let current = ''
+  let inQuotes = false
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+    
+    if (char === '"') {
+      inQuotes = !inQuotes
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim())
+      current = ''
+    } else {
+      current += char
+    }
+  }
+  
+  result.push(current.trim())
+  return result
+}

@@ -173,7 +173,8 @@
     "settings": "Settings",
     "profile": "Profile",
     "help": "Help",
-    "about": "About"
+    "about": "About",
+    "optional": "Optional"
   },
   "limits": {
     "safe": "Safe",

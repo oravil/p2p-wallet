@@ -5,9 +5,11 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, getLimitColor, getProgressColor } from '@/lib/utils'
-import { Wallet, Bank, Plus, ArrowUp, ArrowDown, Warning } from '@phosphor-icons/react'
+import { Wallet, Bank, Plus, ArrowUp, ArrowDown, Warning, PencilSimple, ClockCounterClockwise } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { AddTransactionDialog } from './AddTransactionDialog'
+import { EditWalletDialog } from './EditWalletDialog'
+import { TransactionsHistoryDialog } from './TransactionsHistoryDialog'
 
 interface WalletCardProps {
   summary: WalletSummary
@@ -17,6 +19,8 @@ interface WalletCardProps {
 export function WalletCard({ summary, onEdit }: WalletCardProps) {
   const { t, i18n } = useTranslation()
   const [showAddTransaction, setShowAddTransaction] = useState(false)
+  const [showEditWallet, setShowEditWallet] = useState(false)
+  const [showTransactionHistory, setShowTransactionHistory] = useState(false)
   const { wallet, dailyPercentage, monthlyPercentage, dailyRemaining, monthlyRemaining } = summary
 
   const isAtRisk = dailyPercentage >= 80 || monthlyPercentage >= 80
@@ -117,23 +121,41 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-3 border-t">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded bg-red-50">
-                <ArrowUp size={16} className="text-red-600" weight="bold" />
+          <div className="grid grid-cols-3 gap-2 pt-3 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowEditWallet(true)}
+              className="gap-1"
+            >
+              <PencilSimple size={14} weight="bold" />
+              <span className="hidden sm:inline">Edit</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTransactionHistory(true)}
+              className="gap-1"
+            >
+              <ClockCounterClockwise size={14} weight="bold" />
+              <span className="hidden sm:inline">History</span>
+            </Button>
+            <div className="col-span-1 grid grid-cols-2 gap-2">
+              <div className="flex items-center gap-1">
+                <div className="p-1 rounded bg-red-50">
+                  <ArrowUp size={12} className="text-red-600" weight="bold" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold">{formatCurrency(summary.dailySent, i18n.language)}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">{t('dashboard.totalSent')}</p>
-                <p className="text-sm font-semibold">{formatCurrency(summary.dailySent, i18n.language)}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded bg-green-50">
-                <ArrowDown size={16} className="text-green-600" weight="bold" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">{t('dashboard.totalReceived')}</p>
-                <p className="text-sm font-semibold">{formatCurrency(summary.dailyReceived, i18n.language)}</p>
+              <div className="flex items-center gap-1">
+                <div className="p-1 rounded bg-green-50">
+                  <ArrowDown size={12} className="text-green-600" weight="bold" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold">{formatCurrency(summary.dailyReceived, i18n.language)}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -143,6 +165,18 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
       <AddTransactionDialog
         open={showAddTransaction}
         onOpenChange={setShowAddTransaction}
+        wallet={wallet}
+      />
+      
+      <EditWalletDialog
+        open={showEditWallet}
+        onOpenChange={setShowEditWallet}
+        wallet={wallet}
+      />
+
+      <TransactionsHistoryDialog
+        open={showTransactionHistory}
+        onOpenChange={setShowTransactionHistory}
         wallet={wallet}
       />
     </>

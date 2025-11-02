@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { WalletType } from '@/lib/types'
+import { WalletType, Wallet } from '@/lib/types'
 import { useWallets } from '@/hooks/use-data'
 import { getDefaultLimits } from '@/lib/defaults'
 import { useKV } from '@github/spark/hooks'
 import { DefaultLimits, INITIAL_DEFAULT_LIMITS } from '@/lib/defaults'
 import { toast } from 'sonner'
+import { generateAccountMask, normalizePhoneNumber } from '@/lib/utils'
 
 interface AddWalletDialogProps {
   open: boolean
@@ -19,8 +20,9 @@ interface AddWalletDialogProps {
 
 export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
   const { t } = useTranslation()
-  const { addWallet } = useWallets()
+  const { addWallet, wallets } = useWallets()
   const [defaultLimits] = useKV<DefaultLimits>('default-limits', INITIAL_DEFAULT_LIMITS)
+  const [allWallets] = useKV<Wallet[]>('wallets', [])
   const [formData, setFormData] = useState({
     type: 'vodafone' as WalletType,
     accountNumber: '',
@@ -72,10 +74,22 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       return
     }
 
+    const normalizedNumber = normalizePhoneNumber(formData.accountNumber)
+    const existingWallet = (allWallets || []).find(
+      w => normalizePhoneNumber(w.accountNumber) === normalizedNumber
+    )
+
+    if (existingWallet) {
+      toast.error('This mobile number already exists in your wallets')
+      return
+    }
+
+    const accountName = formData.accountName.trim() || generateAccountMask(formData.accountNumber, formData.type)
+
     addWallet({
       type: formData.type,
       accountNumber: formData.accountNumber,
-      accountName: formData.accountName,
+      accountName,
       bankName: formData.type === 'bank' ? formData.bankName : undefined,
       balance,
       dailyLimit,
@@ -121,14 +135,15 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="accountName">{t('wallet.accountName')}</Label>
+            <Label htmlFor="accountName">{t('wallet.accountName')} ({t('common.optional')})</Label>
             <Input
               id="accountName"
               type="text"
               value={formData.accountName}
               onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
-              required
+              placeholder={generateAccountMask(formData.accountNumber || '000000', formData.type)}
             />
+            <p className="text-xs text-muted-foreground">Leave blank to auto-generate from mobile number</p>
           </div>
 
           <div className="space-y-2">
