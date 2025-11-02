@@ -11,6 +11,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+<<<<<<< Updated upstream
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [themeKV, setThemeKV] = useKV<Theme>('theme', 'light')
   const theme = themeKV || 'light'
@@ -28,6 +29,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light')
   }
+=======
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [theme, setTheme] = useKV<Theme>('theme', 'light')
+
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light')
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme)
+  }, [theme])
+>>>>>>> Stashed changes
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
@@ -36,6 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   )
 }
 
+<<<<<<< Updated upstream
 export function useTheme() {
   const context = useContext(ThemeContext)
   if (!context) {
@@ -59,3 +71,10 @@ export function useTheme() {
 
 
 
+=======
+export const useTheme = () => {
+  const context = useContext(ThemeContext)
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider')
+  return context
+}
+>>>>>>> Stashed changes
