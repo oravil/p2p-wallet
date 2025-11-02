@@ -1,133 +1,133 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuth } from '@/contexts/AuthContext'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { toast } from 'sonner'
-import { User, EnvelopeSimple, Password, IdentificationBadge, MapPin, Phone, Check, X } from '@phosphor-icons/react'
-import { useKV } from '@github/spark/hooks'
-import type { User as UserType } from '@/lib/types'
+import { Button } from '@/components/ui/button'
+import { User, EnvelopeSimple, Password, Iden
+import { Label } from '@/components/ui/label'
+export function UserProfile() {
+  const { user, changePassword } = useAuth()
+  const [isEditingProfile, set
+  
+  const [phone, setPhone] = useState(user?.
+  
 
 export function UserProfile() {
-  const { t } = useTranslation()
+    if (!user) return
   const { user, changePassword } = useAuth()
-  const [users, setUsers] = useKV<UserType[]>('users', [])
-  const [isEditingProfile, setIsEditingProfile] = useState(false)
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
-  
-  const [fullName, setFullName] = useState(user?.fullName || '')
-  const [phone, setPhone] = useState(user?.phone || '')
-  const [address, setAddress] = useState(user?.address || '')
-  
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+      fullName,
+      address
 
-  const handleSaveProfile = () => {
+  
+
+    setIsEditingProfile(false)
+
+  
+    if (currentPassword !== user.password) {
+      return
+
+
+    }
     if (!user) return
 
     const updatedUser = {
-      ...user,
+    toast.succ
       fullName,
-      phone,
+    setConfi
       address
-    }
+    i
 
-    setUsers(current =>
-      (current || []).map(u => u.id === user.id ? updatedUser : u)
-    )
+      emailVerification
 
-    toast.success(t('profile.updateSuccess'))
-    setIsEditingProfile(false)
+     
+
   }
+    setIsEditingProfile(false)
+   
 
-  const handleChangePassword = () => {
-    if (!user) return
+
+    if (user?.emailVe
 
     if (currentPassword !== user.password) {
-      toast.error(t('profile.currentPasswordIncorrect'))
-      return
-    }
-
-    if (newPassword.length < 6) {
-      toast.error(t('profile.passwordTooShort'))
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      toast.error(t('profile.passwordMismatch'))
-      return
-    }
-
-    changePassword(newPassword)
-    toast.success(t('profile.passwordChangeSuccess'))
-    setIsChangingPassword(false)
-    setCurrentPassword('')
-    setNewPassword('')
-    setConfirmPassword('')
-  }
-
-  const handleSendVerification = () => {
-    if (!user) return
-
-    const updatedUser = {
-      ...user,
-      emailVerificationSentAt: new Date().toISOString()
-    }
-
-    setUsers(current =>
-      (current || []).map(u => u.id === user.id ? updatedUser : u)
-    )
-
-    toast.success(t('profile.verificationEmailSent'))
-  }
-
-  const getSubscriptionBadge = () => {
-    if (user?.subscription === 'pro') {
-      return <Badge className="bg-primary text-primary-foreground">{t('subscription.pro.name')}</Badge>
-    }
-    return <Badge variant="secondary">{t('subscription.free.name')}</Badge>
-  }
-
-  const getVerificationBadge = () => {
-    if (user?.emailVerified) {
-      return (
-        <Badge className="gap-1 bg-success text-success-foreground">
-          <Check size={14} weight="bold" />
-          {t('profile.verified')}
-        </Badge>
       )
+      return
     }
+
+  }
+  if (!user) return null
+  return (
+     
+
+          <CardHeader>
+              <div>
+            
+     
+
+                <Button onClick
+                </Button>
+                <div className="
+                    {t('co
+                  <But
+                  </Button
+  }
+
+            <div className="grid grid-co
+                <Labe
+
+                <Input
+              
+                  disabled={!isEditingProfile}
+     
+
+                  <Enve
+                </Label>
+     
+
+                  />
+   
+
+                <Label htmlFor="phone"
+                  {t('profile.phone')}
+                <Input
+     
+                  disabled={!isEditingProfile}
+   
+
+                <Label htmlFor="addres
+                  {t('profile.
+              
+                  value={address}
+                  disabled={!isEditingProfi
+          {t('profile.verified')}
+            </di
+      )
+     
     return (
-      <Badge variant="destructive" className="gap-1">
-        <X size={14} weight="bold" />
-        {t('profile.notVerified')}
-      </Badge>
-    )
+                    <p className="text-sm text-muted-
+                    </p>
+                      size="sm"
+              
+     
   }
 
   if (!user) return null
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">{t('profile.title')}</h1>
-
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
+            <div className="flex items-center justify-betwe
                 <CardTitle className="flex items-center gap-2">
-                  <User size={24} weight="bold" />
-                  {t('profile.personalInfo')}
-                </CardTitle>
-                <CardDescription>{t('profile.personalInfoDescription')}</CardDescription>
-              </div>
-              {!isEditingProfile ? (
+
+                <CardDescription>
+              
+          <CardHeader>
+              )}
+              <div>
+            <CardContent className="space-y-4">
+                <Label htmlFor="currentPassword">{
+                  id="currentPassword"
+                  value={cur
+                />
+
+                <Label htmlFor="newP
                 <Button onClick={() => setIsEditingProfile(true)} variant="outline">
                   {t('common.edit')}
                 </Button>
@@ -258,49 +258,49 @@ export function UserProfile() {
               <div className="space-y-2">
                 <Label htmlFor="newPassword">{t('profile.newPassword')}</Label>
                 <Input
-                  id="newPassword"
+
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                />
+
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
                 <Input
-                  id="confirmPassword"
+
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+
               </div>
 
               <div className="flex gap-2 justify-end">
                 <Button onClick={() => setIsChangingPassword(false)} variant="outline">
                   {t('common.cancel')}
-                </Button>
+
                 <Button onClick={handleChangePassword}>
                   {t('profile.changePassword')}
                 </Button>
               </div>
             </CardContent>
-          )}
+
         </Card>
 
         <Card>
-          <CardHeader>
+
             <CardTitle>{t('profile.subscription')}</CardTitle>
             <CardDescription>{t('profile.subscriptionDescription')}</CardDescription>
           </CardHeader>
-          <CardContent>
+
             <div className="flex items-center justify-between">
-              <div>
+
                 <p className="text-sm text-muted-foreground">{t('subscription.current')}</p>
                 <div className="mt-1">{getSubscriptionBadge()}</div>
               </div>
               {user.subscription === 'free' && (
                 <Button>{t('subscription.upgrade')}</Button>
-              )}
+
             </div>
             <Separator className="my-4" />
             <div className="space-y-2">
@@ -315,7 +315,7 @@ export function UserProfile() {
                     <li className="list-disc">{t('subscription.pro.features.4')}</li>
                     <li className="list-disc">{t('subscription.pro.features.5')}</li>
                     <li className="list-disc">{t('subscription.pro.features.6')}</li>
-                  </>
+
                 ) : (
                   <>
                     <li className="list-disc">{t('subscription.free.features.0')}</li>
@@ -324,11 +324,11 @@ export function UserProfile() {
                     <li className="list-disc">{t('subscription.free.features.3')}</li>
                   </>
                 )}
-              </ul>
+
             </div>
-          </CardContent>
+
         </Card>
-      </div>
+
     </div>
-  )
+
 }
