@@ -1,6 +1,132 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { Transaction, Wallet, WalletSummary } from "./types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
+}
+
+export function formatCurrency(amount: number, locale: string = 'en'): string {
+  return new Intl.NumberFormat(locale === 'ar' ? 'ar-EG' : 'en-EG', {
+    style: 'currency',
+    currency: 'EGP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(amount)
+}
+
+export function formatDate(date: string, locale: string = 'en'): string {
+  return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-EG' : 'en-EG', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date))
+}
+
+export function getStartOfDay(): Date {
+  const date = new Date()
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+export function getStartOfMonth(): Date {
+  const date = new Date()
+  date.setDate(1)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+export function calculateWalletSummary(
+  wallet: Wallet,
+  transactions: Transaction[]
+): WalletSummary {
+  const now = new Date()
+  const startOfDay = getStartOfDay()
+  const startOfMonth = getStartOfMonth()
+
+  const dailyTransactions = transactions.filter(
+    t => new Date(t.date) >= startOfDay
+  )
+  const monthlyTransactions = transactions.filter(
+    t => new Date(t.date) >= startOfMonth
+  )
+
+  const dailySent = dailyTransactions
+    .filter(t => t.type === 'send')
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const dailyReceived = dailyTransactions
+    .filter(t => t.type === 'receive')
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const monthlySent = monthlyTransactions
+    .filter(t => t.type === 'send')
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const monthlyReceived = monthlyTransactions
+    .filter(t => t.type === 'receive')
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const dailyTotal = dailySent + dailyReceived
+  const monthlyTotal = monthlySent + monthlyReceived
+
+  const dailyRemaining = Math.max(0, wallet.dailyLimit - dailyTotal)
+  const monthlyRemaining = Math.max(0, wallet.monthlyLimit - monthlyTotal)
+
+  const dailyPercentage = (dailyTotal / wallet.dailyLimit) * 100
+  const monthlyPercentage = (monthlyTotal / wallet.monthlyLimit) * 100
+
+  return {
+    wallet,
+    dailySent,
+    dailyReceived,
+    monthlySent,
+    monthlyReceived,
+    dailyRemaining,
+    monthlyRemaining,
+    dailyPercentage: Math.min(100, dailyPercentage),
+    monthlyPercentage: Math.min(100, monthlyPercentage),
+    transactions: transactions.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+  }
+}
+
+export function getLimitStatus(percentage: number): 'safe' | 'warning' | 'critical' | 'exceeded' {
+  if (percentage >= 100) return 'exceeded'
+  if (percentage >= 90) return 'critical'
+  if (percentage >= 70) return 'warning'
+  return 'safe'
+}
+
+export function getLimitColor(percentage: number): string {
+  const status = getLimitStatus(percentage)
+  switch (status) {
+    case 'safe':
+      return 'text-green-600'
+    case 'warning':
+      return 'text-orange-600'
+    case 'critical':
+    case 'exceeded':
+      return 'text-red-600'
+  }
+}
+
+export function getProgressColor(percentage: number): string {
+  const status = getLimitStatus(percentage)
+  switch (status) {
+    case 'safe':
+      return 'bg-green-500'
+    case 'warning':
+      return 'bg-orange-500'
+    case 'critical':
+    case 'exceeded':
+      return 'bg-red-500'
+  }
+}
+
+export function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 }
