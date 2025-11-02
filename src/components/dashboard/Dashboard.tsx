@@ -14,6 +14,7 @@ import { ImportWalletsDialog } from '@/components/wallet/ImportWalletsDialog'
 import { BulkActionsDialog } from '@/components/wallet/BulkActionsDialog'
 import { AdminPanel } from '@/components/admin/AdminPanel'
 import { UserProfile } from '@/components/profile/UserProfile'
+import { StatisticsView } from '@/components/dashboard/StatisticsView'
 import { Plus, MagnifyingGlass, Upload, Download, CheckSquare, SortAscending, Warning, ArrowsClockwise } from '@phosphor-icons/react'
 import { formatCurrency, searchPhoneNumber, exportToCSV, formatDate } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -264,6 +265,7 @@ export function Dashboard() {
       userName={user?.fullName || ''}
     >
       {activeTab === 'dashboard' && renderDashboardContent()}
+      {activeTab === 'statistics' && <StatisticsView />}
       {activeTab === 'admin' && user?.role === 'admin' && <AdminPanel />}
       {activeTab === 'profile' && <UserProfile />}
 

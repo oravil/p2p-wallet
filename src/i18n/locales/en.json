@@ -312,5 +312,29 @@
     "dailyLimitExceeded": "Daily limit exceeded!",
     "monthlyLimitExceeded": "Monthly limit exceeded!",
     "limitExceededDescription": "Your account has exceeded its transaction limit. Further transactions may be restricted."
+  },
+  "statistics": {
+    "title": "Statistics",
+    "across": "across",
+    "wallets": "wallets",
+    "totalTransactions": "Total Transactions",
+    "safeWallets": "Safe Wallets",
+    "below70Usage": "Below 70% usage",
+    "exceeded": "exceeded",
+    "dailyLimits": "Daily Limits Overview",
+    "monthlyLimits": "Monthly Limits Overview",
+    "overallUsage": "Overall Usage",
+    "totalSent": "Total Sent",
+    "totalReceived": "Total Received",
+    "totalLimit": "Total Limit",
+    "remainingSend": "Remaining (Send)",
+    "remainingReceive": "Remaining (Receive)",
+    "byWalletType": "Statistics by Wallet Type",
+    "byAccountStatus": "Statistics by Account Status",
+    "topWalletsByBalance": "Top 5 Wallets by Balance",
+    "topWalletsByUsage": "Top 5 Wallets by Daily Usage",
+    "noWallets": "No wallets to display",
+    "dailySent": "Daily Sent",
+    "dailyReceived": "Daily Received"
   }
 }

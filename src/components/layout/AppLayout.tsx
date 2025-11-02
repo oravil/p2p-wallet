@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Wallet, ShieldCheck, UserCircle, SignOut, Translate, List } from '@phosphor-icons/react'
+import { Wallet, ShieldCheck, UserCircle, SignOut, Translate, List, ChartBar } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 interface SidebarNavProps {
@@ -25,6 +25,12 @@ export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggl
       id: 'dashboard',
       label: t('dashboard.title'),
       icon: Wallet,
+      show: true
+    },
+    {
+      id: 'statistics',
+      label: t('statistics.title'),
+      icon: ChartBar,
       show: true
     },
     {
@@ -139,6 +145,12 @@ export function AppLayout({
       id: 'dashboard',
       label: t('dashboard.title'),
       icon: Wallet,
+      show: true
+    },
+    {
+      id: 'statistics',
+      label: t('statistics.title'),
+      icon: ChartBar,
       show: true
     },
     {

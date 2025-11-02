@@ -312,5 +312,29 @@
     "dailyLimitExceeded": "تم تجاوز الحد اليومي!",
     "monthlyLimitExceeded": "تم تجاوز الحد الشهري!",
     "limitExceededDescription": "تجاوز حسابك حد المعاملات. قد يتم تقييد المعاملات الإضافية."
+  },
+  "statistics": {
+    "title": "الإحصائيات",
+    "across": "عبر",
+    "wallets": "محفظة",
+    "totalTransactions": "إجمالي المعاملات",
+    "safeWallets": "محافظ آمنة",
+    "below70Usage": "أقل من 70% استخدام",
+    "exceeded": "تجاوز",
+    "dailyLimits": "نظرة عامة على الحدود اليومية",
+    "monthlyLimits": "نظرة عامة على الحدود الشهرية",
+    "overallUsage": "الاستخدام الإجمالي",
+    "totalSent": "إجمالي المرسل",
+    "totalReceived": "إجمالي المستلم",
+    "totalLimit": "إجمالي الحد",
+    "remainingSend": "المتبقي (إرسال)",
+    "remainingReceive": "المتبقي (استلام)",
+    "byWalletType": "الإحصائيات حسب نوع المحفظة",
+    "byAccountStatus": "الإحصائيات حسب حالة الحساب",
+    "topWalletsByBalance": "أعلى 5 محافظ حسب الرصيد",
+    "topWalletsByUsage": "أعلى 5 محافظ حسب الاستخدام اليومي",
+    "noWallets": "لا توجد محافظ للعرض",
+    "dailySent": "المرسل اليومي",
+    "dailyReceived": "المستلم اليومي"
   }
 }
