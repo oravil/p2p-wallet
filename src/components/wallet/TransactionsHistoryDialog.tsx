@@ -6,10 +6,21 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Transaction, Wallet } from '@/lib/types'
 import { useTransactions } from '@/hooks/use-data'
 import { formatCurrency, formatDate, exportToCSV } from '@/lib/utils'
-import { ArrowUp, ArrowDown, MagnifyingGlass, Download } from '@phosphor-icons/react'
+import { ArrowUp, ArrowDown, MagnifyingGlass, Download, Trash } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 interface TransactionsHistoryDialogProps {
   open: boolean
@@ -19,9 +30,10 @@ interface TransactionsHistoryDialogProps {
 
 export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: TransactionsHistoryDialogProps) {
   const { t, i18n } = useTranslation()
-  const { transactions } = useTransactions(wallet.id)
+  const { transactions, deleteTransaction } = useTransactions(wallet.id)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState<'all' | 'send' | 'receive'>('all')
+  const [deleteTransactionId, setDeleteTransactionId] = useState<string | null>(null)
 
   const filteredTransactions = useMemo(() => {
     let filtered = transactions || []
@@ -61,8 +73,17 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
     .filter(t => t.type === 'receive')
     .reduce((sum, t) => sum + t.amount, 0)
 
+  const handleDeleteTransaction = () => {
+    if (deleteTransactionId) {
+      deleteTransaction(deleteTransactionId)
+      toast.success('Transaction deleted successfully')
+      setDeleteTransactionId(null)
+    }
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>Transaction History - {wallet.accountName}</DialogTitle>
@@ -123,6 +144,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
                     <TableHead>Type</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Description</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -150,6 +172,16 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
                       <TableCell className="max-w-xs truncate">
                         {transaction.description}
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setDeleteTransactionId(transaction.id)}
+                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                        >
+                          <Trash size={16} weight="bold" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -163,5 +195,24 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
         </div>
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={deleteTransactionId !== null} onOpenChange={(open) => !open && setDeleteTransactionId(null)}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this transaction? The wallet balance will be adjusted accordingly. 
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDeleteTransaction} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   )
 }

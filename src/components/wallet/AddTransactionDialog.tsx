@@ -32,18 +32,27 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
       return
     }
 
-    addTransaction({
-      walletId: wallet.id,
-      type,
-      amount: amountNum,
-      description,
-      date: new Date().toISOString()
-    })
+    if (type === 'send' && amountNum > (wallet.balance || 0)) {
+      toast.error('Insufficient balance. Cannot send amount greater than current balance.')
+      return
+    }
 
-    toast.success(t('transaction.success'))
-    setAmount('')
-    setDescription('')
-    onOpenChange(false)
+    try {
+      addTransaction({
+        walletId: wallet.id,
+        type,
+        amount: amountNum,
+        description,
+        date: new Date().toISOString()
+      }, wallet)
+
+      toast.success(t('transaction.success'))
+      setAmount('')
+      setDescription('')
+      onOpenChange(false)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add transaction')
+    }
   }
 
   return (

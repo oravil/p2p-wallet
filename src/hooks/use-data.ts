@@ -45,7 +45,7 @@ export function useWallets() {
     setAllWallets(current => (current || []).filter(w => w.id !== id))
   }
 
-  return { wallets, addWallet, updateWallet, deleteWallet }
+  return { wallets, allWallets, addWallet, updateWallet, deleteWallet }
 }
 
 export function useTransactions(walletId?: string) {
@@ -57,7 +57,14 @@ export function useTransactions(walletId?: string) {
     return walletId ? txs.filter(t => t.walletId === walletId) : txs
   }, [allTransactions, walletId])
 
-  const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt'>) => {
+  const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt'>, wallet?: Wallet) => {
+    if (wallet && transaction.type === 'send') {
+      const currentBalance = wallet.balance || 0
+      if (currentBalance < transaction.amount) {
+        throw new Error('Insufficient balance. Cannot send amount greater than current balance.')
+      }
+    }
+
     const newTransaction: Transaction = {
       ...transaction,
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -80,10 +87,65 @@ export function useTransactions(walletId?: string) {
   }
 
   const deleteTransaction = (id: string) => {
+    const transaction = (allTransactions || []).find(t => t.id === id)
+    
+    if (transaction) {
+      setAllWallets(current => {
+        const wallets = current || []
+        return wallets.map(w => {
+          if (w.id === transaction.walletId) {
+            const currentBalance = w.balance || 0
+            const balanceChange = transaction.type === 'receive' ? -transaction.amount : transaction.amount
+            return { ...w, balance: currentBalance + balanceChange }
+          }
+          return w
+        })
+      })
+    }
+
     setAllTransactions(current => (current || []).filter(t => t.id !== id))
   }
 
-  return { transactions, addTransaction, deleteTransaction }
+  const deleteTransactionsByWallet = (walletId: string) => {
+    setAllTransactions(current => (current || []).filter(t => t.walletId !== walletId))
+  }
+
+  const resetDailyTransactions = (walletId: string) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    setAllTransactions(current => 
+      (current || []).filter(t => {
+        if (t.walletId !== walletId) return true
+        const txDate = new Date(t.date)
+        txDate.setHours(0, 0, 0, 0)
+        return txDate.getTime() !== today.getTime()
+      })
+    )
+  }
+
+  const resetMonthlyTransactions = (walletId: string) => {
+    const startOfMonth = new Date()
+    startOfMonth.setDate(1)
+    startOfMonth.setHours(0, 0, 0, 0)
+    
+    setAllTransactions(current => 
+      (current || []).filter(t => {
+        if (t.walletId !== walletId) return true
+        const txDate = new Date(t.date)
+        return txDate < startOfMonth
+      })
+    )
+  }
+
+  return { 
+    transactions, 
+    addTransaction, 
+    deleteTransaction, 
+    deleteTransactionsByWallet,
+    resetDailyTransactions,
+    resetMonthlyTransactions
+  }
 }
 
 export function useWalletSummaries() {
