@@ -2,34 +2,56 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWalletSummaries, useTransactions } from '@/hooks/use-data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-  Wallet, 
-  TrendUp, 
-  Warning, 
-  Percent
-  Wallet, 
-  Bank, 
-  TrendUp, 
-  TrendDown, 
-  Warning, 
+import { WalletType } from '@/lib/types'
+  Wallet,
+  TrendUp,
+  Warning,
+import { WalletType } from '@/lib/types'
+  Arrows
+  Wallet,
+export 
+  TrendUp,
+
+  Warning,
   CheckCircle,
   Percent,
   CurrencyCircleDollar,
+        totalMonth
+        to
+        totalDailyRemainingRec
 
-    const t
-    const 
+        monthlyUsagePercent: 0,
+        walletsExceeded: 0,
+        byType: {} as Record<WalletType,
+        topWalletsByBalance: [],
+
+
+    const totalDailySent = summaries.reduce((su
+    const tota
     
-    const totalMonthlyLimit = summaries.reduce((sum, s) => sum + s.wallet.mo
-    const totalDailyRemainingSend = summ
+    const totalMonthlyLi
+    const totalDailyRemaining
+    const totalMonthlyRema
 
-
-    const monthlyUsagePercent = totalM
-    const walletsAtRisk = summaries.filt
-    const walletsSafe = summaries.filter(s => s.dailyPercenta
-
+    const monthlyUsagePercen
+    const walletsAtRisk = summar
+    const walletsSafe = sum
+    const byType = summaries.
       if (!acc[type]) {
           count: 0,
           dailySent: 0,
           monthlySent: 0,
+        }
+        monthlyUsagePercent: 0,
+      acc[type].dailySent
+        walletsExceeded: 0,
+      return acc
+
+      const status = s.wallet.status || 'active
+        topWalletsByBalance: [],
+
+      .
+
 
     const totalBalance = summaries.reduce((sum, s) => sum + (s.wallet.balance || 0), 0)
     const totalDailySent = summaries.reduce((sum, s) => sum + s.dailySent, 0)
@@ -64,19 +86,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
           monthlyReceived: 0
         }
       }
-      totalDailyRemaini
+          <CardHeader clas
       acc[type].balance += s.wallet.balance || 0
-      totalMonthlyRemainingReceive,
+            </CardTitle>
       acc[type].dailyReceived += s.dailyReceived
-      walletsAtRisk,
+            <p className="text-xs text-muted
       acc[type].monthlyReceived += s.monthlyReceived
-      byType,
+        </Card>
     }, {} as Record<WalletType, { count: number; balance: number; dailySent: number; dailyReceived: number; monthlySent: number; monthlyReceived: number }>)
 
     const byStatus = summaries.reduce((acc, s) => {
       const status = s.wallet.status || 'active'
       acc[status] = (acc[status] || 0) + 1
-      return <Ba
+              <s
     }, {} as Record<string, number>)
 
     const topWalletsByBalance = [...summaries]
@@ -84,31 +106,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
       .slice(0, 5)
 
     const topWalletsByDailyUsage = [...summaries]
-        return t('wallet.etisalatCash')
+              {t('statistics.safeWallets')}
       .slice(0, 5)
 
     return {
-        return type
       totalWallets: summaries.length,
+
       totalTransactions: allTransactions?.length || 0,
       totalDailySent,
-    if (percentage >= 90)
+            </CardTitle>
       totalMonthlySent,
-  }
+            <div className=
       totalDailyLimit,
       totalMonthlyLimit,
       totalDailyRemainingSend,
-      </div>
-      totalMonthlyRemainingSend,
         <Card>
+      totalMonthlyRemainingSend,
+              {t('statistics.dailyL
       dailyUsagePercent,
-              <CurrencyCir
+            <div>
       walletsAtRisk,
       walletsExceeded,
       walletsSafe,
             <
       byStatus,
-          </CardContent>
+                <span clas
       topWalletsByDailyUsage
      
   }, [summaries, allTransactions])
@@ -122,29 +144,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
   const getWalletTypeName = (type: WalletType) => {
     switch (type) {
-            </div>
+        <Card>
         return t('wallet.vodafoneCash')
-
+              {t('st
         return t('wallet.orangeMoney')
       case 'etisalat':
         return t('wallet.etisalatCash')
       case 'instapay':
         return t('wallet.instaPay')
-            <p cla
+            <Separ
         return t('wallet.bankAccount')
-            </
+              
         return type
-
+     
   }
 
   const getProgressColor = (percentage: number): string => {
     if (percentage >= 100) return 'bg-red-500'
     if (percentage >= 90) return 'bg-red-500'
-            <p className="text-3xl font-bold tex
+              <div className="flex items-center 
     return 'bg-green-500'
    
 
-      </di
+          
     <div className="container mx-auto px-4 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('statistics.title')}</h2>
@@ -152,25 +174,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-              <div className="flex item
+                <div key={type} classNa
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CurrencyCircleDollar size={18} weight="fill" className="text-primary" />
               {t('dashboard.totalBalance')}
-
+                  <div c
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-primary">{formatCurrency(stats.totalBalance, i18n.language)}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {t('statistics.across')} {stats.totalWallets} {t('statistics.wallets')}
-                
+            <Car
           </CardContent>
-              <
+          </Car
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <ArrowsLeftRight size={18} weight="fill" className="text-accent" />
-              <div className="flex items-center j
+                  <div className="text-right ml-2
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -184,9 +206,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
                 <TrendDown size={12} weight="bold" />
                 {formatCurrency(stats.totalDailyReceived, i18n.language)}
               </span>
-              <div
+
           </CardContent>
-              <
+
 
 
           <CardHeader className="pb-2">
@@ -194,16 +216,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
               <CheckCircle size={18} weight="fill" className="text-green-600" />
               {t('statistics.safeWallets')}
             </CardTitle>
-                <span c
+
           <CardContent>
             <p className="text-3xl font-bold text-green-600">{stats.walletsSafe}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {t('statistics.below70Usage')}
             </p>
-            <Separator /
-               
 
-        </Card
+
+
+
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Warning size={18} weight="fill" className="text-orange-600" />
@@ -228,29 +250,29 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-                 
+
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">{t('statistics.overallUsage')}</span>
                 <span className="text-sm font-semibold">{stats.dailyUsagePercent.toFixed(1)}%</span>
-        </Card>
+
               <Progress value={stats.dailyUsagePercent} className="h-3" indicatorClassName={getProgressColor(stats.dailyUsagePercent)} />
             </div>
 
-          <CardContent>
+
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalSent')}</span>
                 <span className="font-semibold text-red-600">{formatCurrency(stats.totalDailySent, i18n.language)}</span>
-                    
+
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalReceived')}</span>
                 <span className="font-semibold text-green-600">{formatCurrency(stats.totalDailyReceived, i18n.language)}</span>
-          </CardCont
+
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalLimit')}</span>
                 <span className="font-semibold">{formatCurrency(stats.totalDailyLimit, i18n.language)}</span>
-          <CardHeade
+
             </div>
 
             <Separator />
@@ -262,63 +284,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{t('statistics.remainingReceive')}</span>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
