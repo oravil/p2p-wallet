@@ -28,6 +28,7 @@ export interface Wallet {
   accountNumber: string
   accountName: string
   bankName?: string
+  balance: number
   dailyLimit: number
   monthlyLimit: number
   createdAt: string

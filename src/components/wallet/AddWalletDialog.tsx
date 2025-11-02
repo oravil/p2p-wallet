@@ -26,6 +26,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
     accountNumber: '',
     accountName: '',
     bankName: '',
+    balance: '',
     dailyLimit: '',
     monthlyLimit: '',
     perTransactionLimit: ''
@@ -57,6 +58,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    const balance = parseFloat(formData.balance) || 0
     const dailyLimit = parseFloat(formData.dailyLimit)
     const monthlyLimit = parseFloat(formData.monthlyLimit)
 
@@ -75,6 +77,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       accountNumber: formData.accountNumber,
       accountName: formData.accountName,
       bankName: formData.type === 'bank' ? formData.bankName : undefined,
+      balance,
       dailyLimit,
       monthlyLimit
     })
@@ -85,6 +88,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       accountNumber: '',
       accountName: '',
       bankName: '',
+      balance: '',
       dailyLimit: '',
       monthlyLimit: '',
       perTransactionLimit: ''
@@ -150,6 +154,20 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
               />
             </div>
           )}
+
+          <div className="space-y-2">
+            <Label htmlFor="balance">Current Balance (EGP)</Label>
+            <Input
+              id="balance"
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.balance}
+              onChange={(e) => setFormData({ ...formData, balance: e.target.value })}
+              placeholder="0.00"
+            />
+            <p className="text-xs text-muted-foreground">Enter the current balance of this account</p>
+          </div>
 
           {(formData.type === 'instapay' || formData.type === 'bank') && formData.perTransactionLimit && (
             <div className="space-y-2">

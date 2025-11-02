@@ -9,11 +9,18 @@ export function useWallets() {
   const [allWallets, setAllWallets] = useKV<Wallet[]>('wallets', [])
 
   const wallets = useMemo(() => {
-    return (allWallets || []).filter(w => w.userId === user?.id)
-  }, [allWallets, user])
+    if (!user?.id) {
+      return []
+    }
+    const filteredWallets = (allWallets || []).filter(w => w.userId === user.id)
+    return filteredWallets
+  }, [allWallets, user?.id])
 
   const addWallet = (wallet: Omit<Wallet, 'id' | 'userId' | 'createdAt'>) => {
-    if (!user) return
+    if (!user) {
+      console.error('Cannot add wallet: No user logged in')
+      return
+    }
 
     const newWallet: Wallet = {
       ...wallet,
@@ -22,7 +29,10 @@ export function useWallets() {
       createdAt: new Date().toISOString()
     }
 
-    setAllWallets(current => [...(current || []), newWallet])
+    setAllWallets(current => {
+      const updated = [...(current || []), newWallet]
+      return updated
+    })
   }
 
   const updateWallet = (id: string, updates: Partial<Wallet>) => {
@@ -40,6 +50,7 @@ export function useWallets() {
 
 export function useTransactions(walletId?: string) {
   const [allTransactions, setAllTransactions] = useKV<Transaction[]>('transactions', [])
+  const [allWallets, setAllWallets] = useKV<Wallet[]>('wallets', [])
 
   const transactions = useMemo(() => {
     const txs = allTransactions || []
@@ -54,6 +65,17 @@ export function useTransactions(walletId?: string) {
     }
 
     setAllTransactions(current => [...(current || []), newTransaction])
+
+    setAllWallets(current => {
+      const wallets = current || []
+      return wallets.map(w => {
+        if (w.id === transaction.walletId) {
+          const balanceChange = transaction.type === 'receive' ? transaction.amount : -transaction.amount
+          return { ...w, balance: w.balance + balanceChange }
+        }
+        return w
+      })
+    })
   }
 
   const deleteTransaction = (id: string) => {

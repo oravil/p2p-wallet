@@ -29,6 +29,7 @@ export function Dashboard() {
 
   const totalSent = summaries.reduce((sum, s) => sum + s.dailySent, 0)
   const totalReceived = summaries.reduce((sum, s) => sum + s.dailyReceived, 0)
+  const totalBalance = summaries.reduce((sum, s) => sum + s.wallet.balance, 0)
   const walletsAtRisk = summaries.filter(s => s.dailyPercentage >= 70 || s.monthlyPercentage >= 70).length
 
   return (
@@ -75,7 +76,11 @@ export function Dashboard() {
 
             <TabsContent value="dashboard" className="m-0">
               <div className="container mx-auto px-4 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-card p-4 rounded-lg border">
+                    <p className="text-sm text-muted-foreground">Total Balance</p>
+                    <p className="text-2xl font-bold text-primary">{formatCurrency(totalBalance, i18n.language)}</p>
+                  </div>
                   <div className="bg-card p-4 rounded-lg border">
                     <p className="text-sm text-muted-foreground">{t('dashboard.totalSent')}</p>
                     <p className="text-2xl font-bold text-red-600">{formatCurrency(totalSent, i18n.language)}</p>
@@ -122,7 +127,11 @@ export function Dashboard() {
           </Tabs>
         ) : (
           <div className="container mx-auto px-4 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-card p-4 rounded-lg border">
+                <p className="text-sm text-muted-foreground">Total Balance</p>
+                <p className="text-2xl font-bold text-primary">{formatCurrency(totalBalance, i18n.language)}</p>
+              </div>
               <div className="bg-card p-4 rounded-lg border">
                 <p className="text-sm text-muted-foreground">{t('dashboard.totalSent')}</p>
                 <p className="text-2xl font-bold text-red-600">{formatCurrency(totalSent, i18n.language)}</p>

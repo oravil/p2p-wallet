@@ -73,6 +73,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                 </div>
                 <p className="text-sm text-muted-foreground">{getWalletTypeName()}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{wallet.accountNumber}</p>
+                <p className="text-lg font-bold text-primary mt-1">{formatCurrency(wallet.balance, i18n.language)}</p>
               </div>
             </div>
             <Button
