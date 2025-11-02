@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Wallet, TransactionType } from '@/lib/types'
 import { useTransactions } from '@/hooks/use-data'
 import { toast } from 'sonner'
-import { ArrowUp, ArrowDown } from '@phosphor-icons/react'
+import { ArrowUp, ArrowDown, Bank } from '@phosphor-icons/react'
 
 interface AddTransactionDialogProps {
   open: boolean
@@ -43,8 +43,8 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
       return
     }
 
-    if (type === 'send' && amountNum > (wallet.balance || 0)) {
-      toast.error('Insufficient balance. Cannot send amount greater than current balance.')
+    if ((type === 'send' || type === 'withdraw') && amountNum > (wallet.balance || 0)) {
+      toast.error('Insufficient balance. Cannot send/withdraw amount greater than current balance.')
       return
     }
 
@@ -84,7 +84,7 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
           <div className="space-y-2">
             <Label>{t('transaction.type')}</Label>
             <Tabs value={type} onValueChange={(v) => setType(v as TransactionType)}>
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="send" className="gap-2">
                   <ArrowUp size={16} weight="bold" />
                   {t('transaction.send')}
@@ -92,6 +92,10 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
                 <TabsTrigger value="receive" className="gap-2">
                   <ArrowDown size={16} weight="bold" />
                   {t('transaction.receive')}
+                </TabsTrigger>
+                <TabsTrigger value="withdraw" className="gap-2">
+                  <Bank size={16} weight="bold" />
+                  {t('transaction.withdraw')}
                 </TabsTrigger>
               </TabsList>
             </Tabs>

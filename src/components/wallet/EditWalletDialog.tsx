@@ -23,7 +23,9 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
     balance: '',
     dailyLimit: '',
     monthlyLimit: '',
-    remainingManual: '',
+    remainingDailyManual: '',
+    remainingMonthlyManual: '',
+    manualLimitType: 'every-month' as 'this-month-only' | 'every-month',
     status: 'active' as AccountStatus,
     note: ''
   })
@@ -34,7 +36,9 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
         balance: (wallet.balance || 0).toString(),
         dailyLimit: wallet.dailyLimit.toString(),
         monthlyLimit: wallet.monthlyLimit.toString(),
-        remainingManual: (wallet.remainingManual || 0).toString(),
+        remainingDailyManual: (wallet.remainingDailyManual !== undefined ? wallet.remainingDailyManual : '').toString(),
+        remainingMonthlyManual: (wallet.remainingMonthlyManual !== undefined ? wallet.remainingMonthlyManual : '').toString(),
+        manualLimitType: wallet.manualLimitType || 'every-month',
         status: wallet.status || 'active',
         note: wallet.note || ''
       })
@@ -49,7 +53,8 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
     const balance = parseFloat(formData.balance) || 0
     const dailyLimit = parseFloat(formData.dailyLimit)
     const monthlyLimit = parseFloat(formData.monthlyLimit)
-    const remainingManual = parseFloat(formData.remainingManual) || 0
+    const remainingDailyManual = formData.remainingDailyManual !== '' ? parseFloat(formData.remainingDailyManual) : undefined
+    const remainingMonthlyManual = formData.remainingMonthlyManual !== '' ? parseFloat(formData.remainingMonthlyManual) : undefined
 
     if (isNaN(dailyLimit) || dailyLimit <= 0 || isNaN(monthlyLimit) || monthlyLimit <= 0) {
       toast.error('Invalid limits')
@@ -61,11 +66,17 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
       return
     }
 
+    const now = new Date()
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+
     updateWallet(wallet.id, {
       balance,
       dailyLimit,
       monthlyLimit,
-      remainingManual,
+      remainingDailyManual,
+      remainingMonthlyManual,
+      manualLimitType: formData.manualLimitType,
+      manualLimitMonth: formData.manualLimitType === 'this-month-only' ? currentMonthKey : undefined,
       status: formData.status,
       note: formData.note
     })
@@ -133,20 +144,63 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-remainingManual">{t('wallet.remainingManual')}</Label>
-            <Input
-              id="edit-remainingManual"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.remainingManual}
-              onChange={(e) => setFormData({ ...formData, remainingManual: e.target.value })}
-              placeholder={t('wallet.remainingManualPlaceholder')}
-            />
-            <p className="text-xs text-muted-foreground">
-              {t('wallet.remainingManualHelp')}
-            </p>
+          <div className="p-4 bg-muted/50 rounded-lg space-y-4">
+            <h3 className="font-semibold text-sm">{t('wallet.manualRemainingLimits')}</h3>
+            
+            <div className="space-y-2">
+              <Label htmlFor="edit-remainingDailyManual">{t('wallet.remainingDailyManual')}</Label>
+              <Input
+                id="edit-remainingDailyManual"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.remainingDailyManual}
+                onChange={(e) => setFormData({ ...formData, remainingDailyManual: e.target.value })}
+                placeholder={t('wallet.remainingManualPlaceholder')}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('wallet.remainingDailyManualHelp')}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-remainingMonthlyManual">{t('wallet.remainingMonthlyManual')}</Label>
+              <Input
+                id="edit-remainingMonthlyManual"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.remainingMonthlyManual}
+                onChange={(e) => setFormData({ ...formData, remainingMonthlyManual: e.target.value })}
+                placeholder={t('wallet.remainingManualPlaceholder')}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('wallet.remainingMonthlyManualHelp')}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="edit-manualLimitType">{t('wallet.manualLimitType')}</Label>
+              <Select
+                value={formData.manualLimitType}
+                onValueChange={(value: 'this-month-only' | 'every-month') => 
+                  setFormData({ ...formData, manualLimitType: value })
+                }
+              >
+                <SelectTrigger id="edit-manualLimitType">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="every-month">{t('wallet.everyMonth')}</SelectItem>
+                  <SelectItem value="this-month-only">{t('wallet.thisMonthOnly')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                {formData.manualLimitType === 'every-month' 
+                  ? t('wallet.everyMonthHelp')
+                  : t('wallet.thisMonthOnlyHelp')}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-2">

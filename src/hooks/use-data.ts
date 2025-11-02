@@ -58,10 +58,10 @@ export function useTransactions(walletId?: string) {
   }, [allTransactions, walletId])
 
   const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt'>, wallet?: Wallet) => {
-    if (wallet && transaction.type === 'send') {
+    if (wallet && (transaction.type === 'send' || transaction.type === 'withdraw')) {
       const currentBalance = wallet.balance || 0
       if (currentBalance < transaction.amount) {
-        throw new Error('Insufficient balance. Cannot send amount greater than current balance.')
+        throw new Error('Insufficient balance. Cannot send/withdraw amount greater than current balance.')
       }
     }
 
@@ -78,7 +78,9 @@ export function useTransactions(walletId?: string) {
       return wallets.map(w => {
         if (w.id === transaction.walletId) {
           const currentBalance = w.balance || 0
-          const balanceChange = transaction.type === 'receive' ? transaction.amount : -transaction.amount
+          const balanceChange = transaction.type === 'receive' 
+            ? transaction.amount 
+            : -transaction.amount
           return { ...w, balance: currentBalance + balanceChange }
         }
         return w

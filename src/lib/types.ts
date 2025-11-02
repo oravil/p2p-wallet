@@ -1,6 +1,6 @@
 export type WalletType = 'vodafone' | 'orange' | 'etisalat' | 'instapay' | 'bank'
 
-export type TransactionType = 'send' | 'receive'
+export type TransactionType = 'send' | 'receive' | 'withdraw'
 
 export type UserRole = 'trader' | 'admin'
 
@@ -33,7 +33,10 @@ export interface Wallet {
   balance: number
   dailyLimit: number
   monthlyLimit: number
-  remainingManual?: number
+  remainingDailyManual?: number
+  remainingMonthlyManual?: number
+  manualLimitType?: 'this-month-only' | 'every-month'
+  manualLimitMonth?: string
   status?: AccountStatus
   note?: string
   createdAt: string

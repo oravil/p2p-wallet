@@ -45,6 +45,7 @@ export function calculateWalletSummary(
   const now = new Date()
   const startOfDay = getStartOfDay()
   const startOfMonth = getStartOfMonth()
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 
   const dailyTransactions = transactions.filter(
     t => new Date(t.date) >= startOfDay
@@ -54,7 +55,7 @@ export function calculateWalletSummary(
   )
 
   const dailySent = dailyTransactions
-    .filter(t => t.type === 'send')
+    .filter(t => t.type === 'send' || t.type === 'withdraw')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const dailyReceived = dailyTransactions
@@ -62,18 +63,38 @@ export function calculateWalletSummary(
     .reduce((sum, t) => sum + t.amount, 0)
 
   const monthlySent = monthlyTransactions
-    .filter(t => t.type === 'send')
+    .filter(t => t.type === 'send' || t.type === 'withdraw')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const monthlyReceived = monthlyTransactions
     .filter(t => t.type === 'receive')
     .reduce((sum, t) => sum + t.amount, 0)
 
+  const currentBalance = wallet.balance || 0
+
+  let dailyRemainingSend = Math.min(wallet.dailyLimit - dailySent, currentBalance, 60000)
+  let dailyRemainingReceive = Math.max(0, 60000 - currentBalance - dailyReceived)
+
+  let monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance, 200000)
+  let monthlyRemainingReceive = Math.max(0, 200000 - currentBalance - monthlyReceived)
+
+  if (wallet.remainingDailyManual !== undefined && wallet.remainingDailyManual >= 0) {
+    dailyRemainingSend = wallet.remainingDailyManual
+    dailyRemainingReceive = wallet.remainingDailyManual
+  }
+
+  if (wallet.remainingMonthlyManual !== undefined && wallet.remainingMonthlyManual >= 0) {
+    if (wallet.manualLimitType === 'this-month-only' && wallet.manualLimitMonth !== currentMonthKey) {
+      monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance, 200000)
+      monthlyRemainingReceive = Math.max(0, 200000 - currentBalance - monthlyReceived)
+    } else {
+      monthlyRemainingSend = wallet.remainingMonthlyManual
+      monthlyRemainingReceive = wallet.remainingMonthlyManual
+    }
+  }
+
   const dailyTotal = dailySent + dailyReceived
   const monthlyTotal = monthlySent + monthlyReceived
-
-  const dailyRemaining = Math.max(0, wallet.dailyLimit - dailyTotal)
-  const monthlyRemaining = Math.max(0, wallet.monthlyLimit - monthlyTotal)
 
   const dailyPercentage = (dailyTotal / wallet.dailyLimit) * 100
   const monthlyPercentage = (monthlyTotal / wallet.monthlyLimit) * 100
@@ -84,8 +105,8 @@ export function calculateWalletSummary(
     dailyReceived,
     monthlySent,
     monthlyReceived,
-    dailyRemaining,
-    monthlyRemaining,
+    dailyRemaining: Math.max(0, dailyRemainingSend),
+    monthlyRemaining: Math.max(0, monthlyRemainingSend),
     dailyPercentage: Math.min(100, dailyPercentage),
     monthlyPercentage: Math.min(100, monthlyPercentage),
     transactions: transactions.sort(

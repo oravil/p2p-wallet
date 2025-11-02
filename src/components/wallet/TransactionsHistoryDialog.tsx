@@ -16,10 +16,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Transaction, Wallet } from '@/lib/types'
+import { Transaction, Wallet, TransactionType } from '@/lib/types'
 import { useTransactions } from '@/hooks/use-data'
 import { formatCurrency, formatDate, exportToCSV } from '@/lib/utils'
-import { ArrowUp, ArrowDown, MagnifyingGlass, Download, Trash } from '@phosphor-icons/react'
+import { ArrowUp, ArrowDown, MagnifyingGlass, Download, Trash, Bank } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 interface TransactionsHistoryDialogProps {
@@ -32,7 +32,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
   const { t, i18n } = useTranslation()
   const { transactions, deleteTransaction } = useTransactions(wallet.id)
   const [searchQuery, setSearchQuery] = useState('')
-  const [filterType, setFilterType] = useState<'all' | 'send' | 'receive'>('all')
+  const [filterType, setFilterType] = useState<'all' | TransactionType>('all')
   const [deleteTransactionId, setDeleteTransactionId] = useState<string | null>(null)
 
   const filteredTransactions = useMemo(() => {
@@ -56,7 +56,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
   const handleExport = () => {
     const exportData = filteredTransactions.map(t => ({
       Date: formatDate(t.date, i18n.language),
-      Type: t.type === 'send' ? 'Sent' : 'Received',
+      Type: t.type === 'send' ? 'Sent' : t.type === 'receive' ? 'Received' : 'Withdrawn',
       Amount: t.amount,
       Description: t.description,
       Wallet: wallet.accountName
@@ -66,7 +66,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
   }
 
   const totalSent = filteredTransactions
-    .filter(t => t.type === 'send')
+    .filter(t => t.type === 'send' || t.type === 'withdraw')
     .reduce((sum, t) => sum + t.amount, 0)
 
   const totalReceived = filteredTransactions
@@ -81,6 +81,31 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
     }
   }
 
+  const getTransactionBadge = (type: TransactionType) => {
+    if (type === 'send') {
+      return (
+        <Badge variant="outline" className="gap-1 border-red-200 text-red-600">
+          <ArrowUp size={12} weight="bold" />
+          Sent
+        </Badge>
+      )
+    } else if (type === 'receive') {
+      return (
+        <Badge variant="outline" className="gap-1 border-green-200 text-green-600">
+          <ArrowDown size={12} weight="bold" />
+          Received
+        </Badge>
+      )
+    } else {
+      return (
+        <Badge variant="outline" className="gap-1 border-orange-200 text-orange-600">
+          <Bank size={12} weight="bold" />
+          Withdrawn
+        </Badge>
+      )
+    }
+  }
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -92,7 +117,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-muted/50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground">Total Sent</p>
+              <p className="text-xs text-muted-foreground">Total Sent/Withdrawn</p>
               <p className="text-lg font-bold text-red-600">{formatCurrency(totalSent, i18n.language)}</p>
             </div>
             <div className="bg-muted/50 p-3 rounded-lg">
@@ -123,6 +148,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
                 <SelectItem value="all">All Transactions</SelectItem>
                 <SelectItem value="send">Sent Only</SelectItem>
                 <SelectItem value="receive">Received Only</SelectItem>
+                <SelectItem value="withdraw">Withdrawn Only</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={handleExport} disabled={filteredTransactions.length === 0}>
@@ -154,17 +180,7 @@ export function TransactionsHistoryDialog({ open, onOpenChange, wallet }: Transa
                         {formatDate(transaction.date, i18n.language)}
                       </TableCell>
                       <TableCell>
-                        {transaction.type === 'send' ? (
-                          <Badge variant="outline" className="gap-1 border-red-200 text-red-600">
-                            <ArrowUp size={12} weight="bold" />
-                            Sent
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="gap-1 border-green-200 text-green-600">
-                            <ArrowDown size={12} weight="bold" />
-                            Received
-                          </Badge>
-                        )}
+                        {getTransactionBadge(transaction.type)}
                       </TableCell>
                       <TableCell className="font-semibold">
                         {formatCurrency(transaction.amount, i18n.language)}
