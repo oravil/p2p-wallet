@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Separator } from '@/components/ui/separator'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Wallet, ShieldCheck, UserCircle, SignOut, Translate, List, Moon, Sun } from '@phosphor-icons/react'
-import { useTheme } from '@/contexts/ThemeContext'
+import { Wallet, ShieldCheck, UserCircle, SignOut, Translate, List } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 interface SidebarNavProps {
@@ -19,7 +18,6 @@ interface SidebarNavProps {
 
 export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggleLanguage, userName }: SidebarNavProps) {
   const { t } = useTranslation()
-  const { theme, toggleTheme } = useTheme()
   const isMobile = useIsMobile()
 
   const navItems = [
@@ -73,24 +71,6 @@ export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggl
       </nav>
 
       <div className="p-4 border-t space-y-2">
-        <Button
-          variant="outline"
-          className="w-full justify-start gap-3"
-          onClick={toggleTheme}
-        >
-          {theme === 'dark' ? (
-            <>
-              <Sun size={20} weight="bold" />
-              <span>{t('profile.darkMode')}</span>
-            </>
-          ) : (
-            <>
-              <Moon size={20} weight="bold" />
-              <span>{t('profile.darkMode')}</span>
-            </>
-          )}
-        </Button>
-
         <Button
           variant="outline"
           className="w-full justify-start gap-3"
@@ -152,7 +132,6 @@ export function AppLayout({
   userName 
 }: AppLayoutProps) {
   const { t } = useTranslation()
-  const { theme, toggleTheme } = useTheme()
   const isMobile = useIsMobile()
 
   const navItems = [
@@ -208,24 +187,6 @@ export function AppLayout({
           </nav>
 
           <div className="p-4 border-t space-y-2">
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3"
-              onClick={toggleTheme}
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Sun size={20} weight="bold" />
-                  <span>{t('profile.darkMode')}</span>
-                </>
-              ) : (
-                <>
-                  <Moon size={20} weight="bold" />
-                  <span>{t('profile.darkMode')}</span>
-                </>
-              )}
-            </Button>
-
             <Button
               variant="outline"
               className="w-full justify-start gap-3"

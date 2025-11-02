@@ -154,7 +154,7 @@ export function Dashboard() {
         </Alert>
       )}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-card p-4 rounded-lg border">
           <p className="text-sm text-muted-foreground">{t('dashboard.totalBalance')}</p>
           <p className="text-2xl font-bold text-primary">{formatCurrency(totalBalance, i18n.language)}</p>
@@ -175,9 +175,9 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
         <h2 className="text-xl font-semibold">{t('dashboard.allWallets')}</h2>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           <Button 
             variant="outline" 
             size="icon"
@@ -186,17 +186,17 @@ export function Dashboard() {
           >
             <ArrowsClockwise size={20} weight="bold" />
           </Button>
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <MagnifyingGlass size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={t('dashboard.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 w-[200px]"
+              className="pl-10 w-full sm:w-[200px]"
             />
           </div>
           <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-full sm:w-[200px]">
               <SortAscending size={18} className="mr-2" />
               <SelectValue />
             </SelectTrigger>
@@ -209,21 +209,23 @@ export function Dashboard() {
               <SelectItem value="monthly-remaining-low">{t('dashboard.sortMonthlyLow')}</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" onClick={() => setShowImportWallets(true)}>
-            <Upload size={20} weight="bold" />
-            <span className="ml-2 hidden sm:inline">{t('dashboard.import')}</span>
-          </Button>
-          <Button variant="outline" onClick={handleExportWallets} disabled={summaries.length === 0}>
-            <Download size={20} weight="bold" />
-            <span className="ml-2 hidden sm:inline">{t('dashboard.export')}</span>
-          </Button>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button variant="outline" onClick={() => setShowImportWallets(true)} className="flex-1 sm:flex-none">
+              <Upload size={20} weight="bold" />
+              <span className="ml-2">{t('dashboard.import')}</span>
+            </Button>
+            <Button variant="outline" onClick={handleExportWallets} disabled={summaries.length === 0} className="flex-1 sm:flex-none">
+              <Download size={20} weight="bold" />
+              <span className="ml-2">{t('dashboard.export')}</span>
+            </Button>
+          </div>
           {user?.role === 'admin' && (
-            <Button variant="outline" onClick={() => setShowBulkActions(true)} disabled={summaries.length === 0}>
+            <Button variant="outline" onClick={() => setShowBulkActions(true)} disabled={summaries.length === 0} className="w-full sm:w-auto">
               <CheckSquare size={20} weight="bold" />
-              <span className="ml-2 hidden sm:inline">{t('admin.bulkActions')}</span>
+              <span className="ml-2">{t('admin.bulkActions')}</span>
             </Button>
           )}
-          <Button onClick={() => setShowAddWallet(true)}>
+          <Button onClick={() => setShowAddWallet(true)} className="w-full sm:w-auto">
             <Plus size={20} weight="bold" />
             <span className="ml-2">{t('dashboard.addWallet')}</span>
           </Button>

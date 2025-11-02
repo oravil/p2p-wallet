@@ -1,20 +1,17 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
-import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
-import { User, EnvelopeSimple, Password, IdentificationBadge, Phone, MapPin, Check, X, Moon, Sun, Palette } from '@phosphor-icons/react'
+import { User, EnvelopeSimple, Password, IdentificationBadge, Phone, MapPin, Check, X } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 export function UserProfile() {
   const { user, changePassword } = useAuth()
-  const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
   
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -100,49 +97,11 @@ export function UserProfile() {
   if (!user) return null
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="space-y-6 max-w-4xl">
+    <div className="container mx-auto px-4 py-6 max-w-4xl">
+      <div className="space-y-6">
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Palette size={24} weight="bold" />
-                  {t('profile.appearance')}
-                </CardTitle>
-                <CardDescription>{t('profile.appearanceDescription')}</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {theme === 'dark' ? (
-                  <Moon size={20} weight="fill" className="text-primary" />
-                ) : (
-                  <Sun size={20} weight="fill" className="text-primary" />
-                )}
-                <div>
-                  <Label htmlFor="theme-toggle" className="font-medium cursor-pointer">
-                    {t('profile.darkMode')}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t('profile.darkModeDescription')}
-                  </p>
-                </div>
-              </div>
-              <Switch
-                id="theme-toggle"
-                checked={theme === 'dark'}
-                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <User size={24} weight="bold" />
@@ -186,11 +145,12 @@ export function UserProfile() {
                   <EnvelopeSimple size={16} />
                   {t('auth.email')}
                 </Label>
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center flex-wrap">
                   <Input
                     id="email"
                     value={user.email}
                     disabled
+                    className="flex-1 min-w-0"
                   />
                   {getVerificationBadge()}
                 </div>
@@ -251,7 +211,7 @@ export function UserProfile() {
 
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Password size={24} weight="bold" />
@@ -298,7 +258,7 @@ export function UserProfile() {
                 />
               </div>
 
-              <div className="flex gap-2 justify-end">
+              <div className="flex gap-2 justify-end flex-wrap">
                 <Button onClick={() => setIsChangingPassword(false)} variant="outline">
                   {t('common.cancel')}
                 </Button>
@@ -316,7 +276,7 @@ export function UserProfile() {
             <CardDescription>{t('profile.subscriptionDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">{t('subscription.current')}</p>
                 <div className="mt-1">{getSubscriptionBadge()}</div>
