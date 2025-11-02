@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, getLimitColor, getProgressColor } from '@/lib/utils'
-import { Wallet, Bank, Plus, ArrowUp, ArrowDown } from '@phosphor-icons/react'
+import { Wallet, Bank, Plus, ArrowUp, ArrowDown, Warning } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { AddTransactionDialog } from './AddTransactionDialog'
 
@@ -18,6 +18,9 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
   const { t, i18n } = useTranslation()
   const [showAddTransaction, setShowAddTransaction] = useState(false)
   const { wallet, dailyPercentage, monthlyPercentage, dailyRemaining, monthlyRemaining } = summary
+
+  const isAtRisk = dailyPercentage >= 80 || monthlyPercentage >= 80
+  const isExceeded = dailyPercentage >= 100 || monthlyPercentage >= 100
 
   const getWalletIcon = () => {
     if (wallet.type === 'bank') {
@@ -45,7 +48,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-shadow">
+      <Card className={`hover:shadow-lg transition-shadow ${isAtRisk ? 'ring-2 ring-warning/30' : ''} ${isExceeded ? 'ring-2 ring-destructive/30' : ''}`}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-3">
@@ -53,7 +56,21 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                 {getWalletIcon()}
               </div>
               <div>
-                <CardTitle className="text-lg">{wallet.accountName}</CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-lg">{wallet.accountName}</CardTitle>
+                  {isExceeded && (
+                    <Badge variant="destructive" className="gap-1 text-xs">
+                      <Warning size={12} weight="fill" />
+                      {t('limits.exceeded')}
+                    </Badge>
+                  )}
+                  {isAtRisk && !isExceeded && (
+                    <Badge variant="outline" className="gap-1 text-xs border-warning text-warning">
+                      <Warning size={12} weight="fill" />
+                      {t('limits.warning')}
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{getWalletTypeName()}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{wallet.accountNumber}</p>
               </div>

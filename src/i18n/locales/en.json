@@ -168,5 +168,13 @@
     "monthlyUsage": "Monthly Usage",
     "availableToday": "Available Today",
     "availableThisMonth": "Available This Month"
+  },
+  "warnings": {
+    "dailyUsed": "daily limit used",
+    "monthlyUsed": "monthly limit used",
+    "approachingLimit": "You're approaching your transaction limit. Monitor your activity carefully.",
+    "dailyLimitExceeded": "Daily limit exceeded!",
+    "monthlyLimitExceeded": "Monthly limit exceeded!",
+    "limitExceededDescription": "Your account has exceeded its transaction limit. Further transactions may be restricted."
   }
 }

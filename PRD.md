@@ -27,11 +27,18 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 - **Success criteria**: All wallets display with correct limits, can be edited or removed, data persists between sessions
 
 ### Transaction Tracking
-- **Functionality**: Manual entry of sent/received transactions with real-time calculation of daily and monthly totals against limits
+- **Functionality**: Manual entry of sent/received transactions with real-time calculation of daily and monthly totals against limits, including automated warnings at 80% usage
 - **Purpose**: Monitor transaction volume to prevent exceeding limits that trigger account freezes
 - **Trigger**: "Add Transaction" button on wallet card
-- **Progression**: Select wallet → choose send/receive → enter amount → submit → updates totals → recalculates remaining limits → shows visual feedback
-- **Success criteria**: Totals update instantly, warnings appear when approaching limits (80%+), error alerts when exceeding limits
+- **Progression**: Select wallet → choose send/receive → enter amount → submit → updates totals → recalculates remaining limits → shows visual feedback → triggers toast notification if 80%+ threshold reached
+- **Success criteria**: Totals update instantly, warnings appear when approaching limits (80%+), error alerts when exceeding limits, toast notifications persist for appropriate duration
+
+### Automated Limit Warnings
+- **Functionality**: Real-time monitoring of wallet limit usage with automatic toast notifications when reaching 80% of daily or monthly limits
+- **Purpose**: Proactive alerts to prevent traders from accidentally exceeding limits and triggering account restrictions
+- **Trigger**: Automatic when any transaction pushes wallet usage to 80% or higher
+- **Progression**: Transaction recorded → calculate new percentages → detect 80% threshold crossed → display toast warning with wallet name and percentage → show visual badges on wallet cards → persist warning state until usage drops below 80%
+- **Success criteria**: Warnings only trigger once per threshold crossing, notifications are bilingual, visual badges appear on affected wallet cards, warnings clear when usage drops below threshold
 
 ### Limit Visualization
 - **Functionality**: Progress bars and percentage indicators showing daily/monthly usage against limits with color-coded warnings
@@ -82,7 +89,9 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 - **Invalid Limits**: Validate that monthly limit >= daily limit * 30, prevent negative values, warn if limits are unusually low
 - **Account Deletion**: Confirm deletion with password re-entry; soft delete with 30-day recovery period; anonymize user data
 - **Language Detection**: Auto-detect browser language on first visit, default to Arabic for Egyptian IPs, remember manual selection
-- **Exceeding Limits**: Block transaction submission when limit exceeded, show alternative wallets with available capacity
+- **Exceeding Limits**: Block transaction submission when limit exceeded, show alternative wallets with available capacity, maintain persistent warning state
+- **Warning Notification Spam**: Prevent duplicate toast notifications by tracking warning state per wallet, only re-show if usage drops below 80% then crosses again
+- **Multiple Simultaneous Warnings**: Handle multiple wallets reaching thresholds at same time with staggered toast displays
 - **Time Zone Handling**: All timestamps in UTC, convert to Egypt timezone (GMT+2) for display, reset daily limits at midnight Egypt time
 - **Expired Sessions**: Detect expired JWT, show login modal overlay without losing form data, restore after re-authentication
 
@@ -138,12 +147,12 @@ Animations should feel responsive and purposeful, confirming actions without del
   - Form + Input + Label (transaction entry, wallet creation)
   - Dialog (confirmations, transaction forms)
   - Alert (limit warnings, success messages)
-  - Badge (account status, subscription tier)
+  - Badge (account status, subscription tier, wallet limit warnings)
   - Table (transaction history, admin user list)
   - Tabs (switching between daily/monthly views)
   - Select (wallet type chooser, language picker)
   - Avatar (user profile images)
-  - Toast (non-blocking notifications via sonner)
+  - Toast (non-blocking notifications via sonner for automated limit warnings and transaction confirmations)
   - Separator (visual grouping of sections)
   - Switch (toggle between send/receive)
   
@@ -156,7 +165,7 @@ Animations should feel responsive and purposeful, confirming actions without del
 - **States**: 
   - Buttons: hover (lift + brightness), active (scale 0.98), disabled (opacity 0.5 + no pointer)
   - Inputs: focus (ring + border accent color), error (red border + shake animation), filled (subtle background change)
-  - Cards: hover (shadow elevation), selected (accent border), danger (red border pulse when limit exceeded)
+  - Cards: hover (shadow elevation), selected (accent border), danger (red border pulse when limit exceeded), warning (orange ring when at 80%+)
   
 - **Icon Selection**: 
   - Wallet/Bank (phosphor-icons: Wallet, Bank)

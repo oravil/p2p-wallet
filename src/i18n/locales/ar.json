@@ -168,5 +168,13 @@
     "monthlyUsage": "الاستخدام الشهري",
     "availableToday": "المتاح اليوم",
     "availableThisMonth": "المتاح هذا الشهر"
+  },
+  "warnings": {
+    "dailyUsed": "من الحد اليومي مستخدم",
+    "monthlyUsed": "من الحد الشهري مستخدم",
+    "approachingLimit": "أنت تقترب من حد المعاملات. راقب نشاطك بعناية.",
+    "dailyLimitExceeded": "تم تجاوز الحد اليومي!",
+    "monthlyLimitExceeded": "تم تجاوز الحد الشهري!",
+    "limitExceededDescription": "تجاوز حسابك حد المعاملات. قد يتم تقييد المعاملات الإضافية."
   }
 }

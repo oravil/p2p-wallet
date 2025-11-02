@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/contexts/AuthContext'
 import { useWalletSummaries } from '@/hooks/use-data'
+import { useLimitWarnings } from '@/hooks/use-limit-warnings'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WalletCard } from '@/components/wallet/WalletCard'
@@ -14,6 +15,7 @@ export function Dashboard() {
   const { t, i18n } = useTranslation()
   const { user, logout } = useAuth()
   const summaries = useWalletSummaries()
+  useLimitWarnings(summaries)
   const [showAddWallet, setShowAddWallet] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
 
