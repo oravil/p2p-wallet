@@ -4,7 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Wallet } from '@/lib/types'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Wallet, AccountStatus } from '@/lib/types'
 import { useWallets } from '@/hooks/use-data'
 import { toast } from 'sonner'
 
@@ -20,7 +22,10 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
   const [formData, setFormData] = useState({
     balance: '',
     dailyLimit: '',
-    monthlyLimit: ''
+    monthlyLimit: '',
+    remainingManual: '',
+    status: 'active' as AccountStatus,
+    note: ''
   })
 
   useEffect(() => {
@@ -28,7 +33,10 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
       setFormData({
         balance: (wallet.balance || 0).toString(),
         dailyLimit: wallet.dailyLimit.toString(),
-        monthlyLimit: wallet.monthlyLimit.toString()
+        monthlyLimit: wallet.monthlyLimit.toString(),
+        remainingManual: (wallet.remainingManual || 0).toString(),
+        status: wallet.status || 'active',
+        note: wallet.note || ''
       })
     }
   }, [wallet, open])
@@ -41,6 +49,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
     const balance = parseFloat(formData.balance) || 0
     const dailyLimit = parseFloat(formData.dailyLimit)
     const monthlyLimit = parseFloat(formData.monthlyLimit)
+    const remainingManual = parseFloat(formData.remainingManual) || 0
 
     if (isNaN(dailyLimit) || dailyLimit <= 0 || isNaN(monthlyLimit) || monthlyLimit <= 0) {
       toast.error('Invalid limits')
@@ -55,7 +64,10 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
     updateWallet(wallet.id, {
       balance,
       dailyLimit,
-      monthlyLimit
+      monthlyLimit,
+      remainingManual,
+      status: formData.status,
+      note: formData.note
     })
 
     toast.success('Wallet updated successfully')
@@ -66,7 +78,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Wallet Details</DialogTitle>
         </DialogHeader>
@@ -119,6 +131,60 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
               onChange={(e) => setFormData({ ...formData, monthlyLimit: e.target.value })}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-remainingManual">Remaining Manual Override (EGP)</Label>
+            <Input
+              id="edit-remainingManual"
+              type="number"
+              step="0.01"
+              min="0"
+              value={formData.remainingManual}
+              onChange={(e) => setFormData({ ...formData, remainingManual: e.target.value })}
+              placeholder="Leave 0 for automatic calculation"
+            />
+            <p className="text-xs text-muted-foreground">
+              Set a manual remaining limit override. Leave at 0 to use automatic calculation.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-status">Account Status</Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value: AccountStatus) => setFormData({ ...formData, status: value })}
+            >
+              <SelectTrigger id="edit-status">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="paused">Paused</SelectItem>
+                <SelectItem value="suspended">Suspended</SelectItem>
+                <SelectItem value="issue">Bank/Mobile Account Issue</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              {formData.status === 'active' && 'Account is operational and can process transactions'}
+              {formData.status === 'paused' && 'Account is temporarily paused - no transactions allowed'}
+              {formData.status === 'suspended' && 'Account is suspended due to policy violation'}
+              {formData.status === 'issue' && 'Account has technical issues with bank or mobile provider'}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-note">Account Note</Label>
+            <Textarea
+              id="edit-note"
+              value={formData.note}
+              onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              placeholder="Add notes about this account (e.g., reason for suspension, issue details, etc.)"
+              rows={3}
+            />
+            <p className="text-xs text-muted-foreground">
+              Internal notes for tracking account status, issues, or important information.
+            </p>
           </div>
 
           <div className="flex gap-2 justify-end">

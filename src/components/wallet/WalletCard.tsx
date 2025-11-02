@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { formatCurrency, getLimitColor, getProgressColor } from '@/lib/utils'
-import { Wallet, Bank, Plus, ArrowUp, ArrowDown, Warning, PencilSimple, ClockCounterClockwise, DotsThree, Trash, ArrowsClockwise } from '@phosphor-icons/react'
+import { Wallet, Bank, Plus, ArrowUp, ArrowDown, Warning, PencilSimple, ClockCounterClockwise, DotsThree, Trash, ArrowsClockwise, Pause, X, Article } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { AddTransactionDialog } from './AddTransactionDialog'
 import { EditWalletDialog } from './EditWalletDialog'
@@ -49,6 +49,35 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
 
   const isAtRisk = dailyPercentage >= 80 || monthlyPercentage >= 80
   const isExceeded = dailyPercentage >= 100 || monthlyPercentage >= 100
+
+  const getStatusBadge = () => {
+    const status = wallet.status || 'active'
+    switch (status) {
+      case 'paused':
+        return (
+          <Badge variant="secondary" className="gap-1 text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
+            <Pause size={12} weight="fill" />
+            Paused
+          </Badge>
+        )
+      case 'suspended':
+        return (
+          <Badge variant="secondary" className="gap-1 text-xs bg-red-100 text-red-800 border-red-300">
+            <X size={12} weight="fill" />
+            Suspended
+          </Badge>
+        )
+      case 'issue':
+        return (
+          <Badge variant="secondary" className="gap-1 text-xs bg-orange-100 text-orange-800 border-orange-300">
+            <Warning size={12} weight="fill" />
+            Account Issue
+          </Badge>
+        )
+      default:
+        return null
+    }
+  }
 
   const handleDeleteAccount = () => {
     deleteTransactionsByWallet(wallet.id)
@@ -103,8 +132,9 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                 {getWalletIcon()}
               </div>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <CardTitle className="text-lg">{wallet.accountName}</CardTitle>
+                  {getStatusBadge()}
                   {isExceeded && (
                     <Badge variant="destructive" className="gap-1 text-xs">
                       <Warning size={12} weight="fill" />
@@ -120,6 +150,12 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                 </div>
                 <p className="text-sm text-muted-foreground">{getWalletTypeName()}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{wallet.accountNumber}</p>
+                {wallet.note && (
+                  <div className="flex items-start gap-1 mt-1 text-xs text-muted-foreground bg-muted/50 p-1.5 rounded">
+                    <Article size={12} weight="fill" className="mt-0.5 shrink-0" />
+                    <span className="line-clamp-2">{wallet.note}</span>
+                  </div>
+                )}
                 <p className="text-lg font-bold text-primary mt-1">{formatCurrency(wallet.balance || 0, i18n.language)}</p>
               </div>
             </div>
@@ -127,6 +163,8 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               <Button
                 size="sm"
                 onClick={() => setShowAddTransaction(true)}
+                disabled={wallet.status !== 'active' && wallet.status !== undefined}
+                title={wallet.status && wallet.status !== 'active' ? `Account is ${wallet.status}` : 'Add Transaction'}
               >
                 <Plus size={16} weight="bold" />
               </Button>

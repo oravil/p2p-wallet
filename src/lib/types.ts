@@ -8,6 +8,8 @@ export type UserStatus = 'active' | 'pending' | 'suspended' | 'banned'
 
 export type SubscriptionTier = 'free' | 'pro'
 
+export type AccountStatus = 'active' | 'paused' | 'suspended' | 'issue'
+
 export interface User {
   id: string
   email: string
@@ -31,6 +33,9 @@ export interface Wallet {
   balance: number
   dailyLimit: number
   monthlyLimit: number
+  remainingManual?: number
+  status?: AccountStatus
+  note?: string
   createdAt: string
 }
 

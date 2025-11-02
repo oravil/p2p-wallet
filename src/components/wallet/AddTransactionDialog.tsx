@@ -26,6 +26,17 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    const accountStatus = wallet.status || 'active'
+    if (accountStatus !== 'active') {
+      const statusMessages = {
+        paused: 'This account is paused. Transactions are not allowed.',
+        suspended: 'This account is suspended. Transactions are not allowed.',
+        issue: 'This account has issues. Please resolve before making transactions.'
+      }
+      toast.error(statusMessages[accountStatus] || 'Account is not active')
+      return
+    }
+
     const amountNum = parseFloat(amount)
     if (isNaN(amountNum) || amountNum <= 0) {
       toast.error('Invalid amount')
@@ -61,6 +72,13 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
         <DialogHeader>
           <DialogTitle>{t('transaction.add')}</DialogTitle>
         </DialogHeader>
+
+        {wallet.status && wallet.status !== 'active' && (
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm text-yellow-800">
+            <strong>Warning:</strong> This account is currently {wallet.status}. 
+            {wallet.note && <p className="mt-1 text-xs">{wallet.note}</p>}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
