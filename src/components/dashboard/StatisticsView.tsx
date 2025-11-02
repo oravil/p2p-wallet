@@ -2,56 +2,56 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWalletSummaries, useTransactions } from '@/hooks/use-data'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Separator } from '@/components/ui/separator'
 import { WalletType } from '@/lib/types'
-  Wallet,
-  TrendUp,
-  Warning,
-import { WalletType } from '@/lib/types'
-  Arrows
-  Wallet,
-export 
-  TrendUp,
-
-  Warning,
+import { formatCurrency } from '@/lib/utils'
+import {
+  ArrowsLeftRight,
+  Bank,
+  Calendar,
   CheckCircle,
-  Percent,
   CurrencyCircleDollar,
-        totalMonth
-        to
-        totalDailyRemainingRec
+  Percent,
+  TrendDown,
+  TrendUp,
+  Wallet,
+  Warning,
+} from '@phosphor-icons/react'
 
+export function StatisticsView() {
+  const { t, i18n } = useTranslation()
+  const summaries = useWalletSummaries()
+  const { transactions: allTransactions } = useTransactions()
+
+  const stats = useMemo(() => {
+    if (!summaries || summaries.length === 0) {
+      return {
+        totalWallets: 0,
+        totalBalance: 0,
+        totalTransactions: 0,
+        totalDailySent: 0,
+        totalDailyReceived: 0,
+        totalMonthlySent: 0,
+        totalMonthlyReceived: 0,
+        totalDailyLimit: 0,
+        totalMonthlyLimit: 0,
+        totalDailyRemainingSend: 0,
+        totalDailyRemainingReceive: 0,
+        totalMonthlyRemainingSend: 0,
+        totalMonthlyRemainingReceive: 0,
+        dailyUsagePercent: 0,
         monthlyUsagePercent: 0,
+        walletsAtRisk: 0,
         walletsExceeded: 0,
-        byType: {} as Record<WalletType,
+        walletsSafe: 0,
+        byType: {} as Record<WalletType, { count: number; balance: number; dailySent: number; dailyReceived: number; monthlySent: number; monthlyReceived: number }>,
+        byStatus: {} as Record<string, number>,
         topWalletsByBalance: [],
-
-
-    const totalDailySent = summaries.reduce((su
-    const tota
-    
-    const totalMonthlyLi
-    const totalDailyRemaining
-    const totalMonthlyRema
-
-    const monthlyUsagePercen
-    const walletsAtRisk = summar
-    const walletsSafe = sum
-    const byType = summaries.
-      if (!acc[type]) {
-          count: 0,
-          dailySent: 0,
-          monthlySent: 0,
-        }
-        monthlyUsagePercent: 0,
-      acc[type].dailySent
-        walletsExceeded: 0,
-      return acc
-
-      const status = s.wallet.status || 'active
-        topWalletsByBalance: [],
-
-      .
-
+        topWalletsByDailyUsage: []
+      }
+    }
 
     const totalBalance = summaries.reduce((sum, s) => sum + (s.wallet.balance || 0), 0)
     const totalDailySent = summaries.reduce((sum, s) => sum + s.dailySent, 0)
@@ -86,19 +86,19 @@ export
           monthlyReceived: 0
         }
       }
-          <CardHeader clas
+      acc[type].count += 1
       acc[type].balance += s.wallet.balance || 0
-            </CardTitle>
+      acc[type].dailySent += s.dailySent
       acc[type].dailyReceived += s.dailyReceived
-            <p className="text-xs text-muted
+      acc[type].monthlySent += s.monthlySent
       acc[type].monthlyReceived += s.monthlyReceived
-        </Card>
+      return acc
     }, {} as Record<WalletType, { count: number; balance: number; dailySent: number; dailyReceived: number; monthlySent: number; monthlyReceived: number }>)
 
     const byStatus = summaries.reduce((acc, s) => {
       const status = s.wallet.status || 'active'
       acc[status] = (acc[status] || 0) + 1
-              <s
+      return acc
     }, {} as Record<string, number>)
 
     const topWalletsByBalance = [...summaries]
@@ -106,93 +106,93 @@ export
       .slice(0, 5)
 
     const topWalletsByDailyUsage = [...summaries]
-              {t('statistics.safeWallets')}
+      .sort((a, b) => b.dailyPercentage - a.dailyPercentage)
       .slice(0, 5)
 
     return {
       totalWallets: summaries.length,
-
+      totalBalance,
       totalTransactions: allTransactions?.length || 0,
       totalDailySent,
-            </CardTitle>
+      totalDailyReceived,
       totalMonthlySent,
-            <div className=
+      totalMonthlyReceived,
       totalDailyLimit,
       totalMonthlyLimit,
       totalDailyRemainingSend,
-        <Card>
+      totalDailyRemainingReceive,
       totalMonthlyRemainingSend,
-              {t('statistics.dailyL
+      totalMonthlyRemainingReceive,
       dailyUsagePercent,
-            <div>
+      monthlyUsagePercent,
       walletsAtRisk,
       walletsExceeded,
       walletsSafe,
-            <
+      byType,
       byStatus,
-                <span clas
+      topWalletsByBalance,
       topWalletsByDailyUsage
-     
+    }
   }, [summaries, allTransactions])
 
   const getWalletTypeIcon = (type: WalletType) => {
     if (type === 'bank' || type === 'instapay') {
       return <Bank size={20} weight="fill" className="text-primary" />
-     
+    }
     return <Wallet size={20} weight="fill" className="text-accent" />
-   
+  }
 
   const getWalletTypeName = (type: WalletType) => {
     switch (type) {
-        <Card>
+      case 'vodafone':
         return t('wallet.vodafoneCash')
-              {t('st
+      case 'orange':
         return t('wallet.orangeMoney')
       case 'etisalat':
         return t('wallet.etisalatCash')
       case 'instapay':
         return t('wallet.instaPay')
-            <Separ
+      case 'bank':
         return t('wallet.bankAccount')
-              
+      default:
         return type
-     
+    }
   }
 
   const getProgressColor = (percentage: number): string => {
     if (percentage >= 100) return 'bg-red-500'
     if (percentage >= 90) return 'bg-red-500'
-              <div className="flex items-center 
+    if (percentage >= 70) return 'bg-orange-500'
     return 'bg-green-500'
-   
+  }
 
-          
+  return (
     <div className="container mx-auto px-4 py-6 space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{t('statistics.title')}</h2>
-            
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
-                <div key={type} classNa
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CurrencyCircleDollar size={18} weight="fill" className="text-primary" />
               {t('dashboard.totalBalance')}
-                  <div c
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-primary">{formatCurrency(stats.totalBalance, i18n.language)}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {t('statistics.across')} {stats.totalWallets} {t('statistics.wallets')}
-            <Car
+            </p>
           </CardContent>
-          </Car
+        </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <ArrowsLeftRight size={18} weight="fill" className="text-accent" />
-                  <div className="text-right ml-2
+              {t('statistics.transactions')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -206,26 +206,26 @@ export
                 <TrendDown size={12} weight="bold" />
                 {formatCurrency(stats.totalDailyReceived, i18n.language)}
               </span>
-
+            </div>
           </CardContent>
+        </Card>
 
-
-
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <CheckCircle size={18} weight="fill" className="text-green-600" />
               {t('statistics.safeWallets')}
             </CardTitle>
-
+          </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-green-600">{stats.walletsSafe}</p>
             <p className="text-xs text-muted-foreground mt-1">
               {t('statistics.below70Usage')}
             </p>
+          </CardContent>
+        </Card>
 
-
-
-
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Warning size={18} weight="fill" className="text-orange-600" />
@@ -250,29 +250,29 @@ export
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-
+            <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium">{t('statistics.overallUsage')}</span>
                 <span className="text-sm font-semibold">{stats.dailyUsagePercent.toFixed(1)}%</span>
-
+              </div>
               <Progress value={stats.dailyUsagePercent} className="h-3" indicatorClassName={getProgressColor(stats.dailyUsagePercent)} />
             </div>
 
-
+            <Separator />
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalSent')}</span>
                 <span className="font-semibold text-red-600">{formatCurrency(stats.totalDailySent, i18n.language)}</span>
-
+              </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalReceived')}</span>
                 <span className="font-semibold text-green-600">{formatCurrency(stats.totalDailyReceived, i18n.language)}</span>
-
+              </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('statistics.totalLimit')}</span>
                 <span className="font-semibold">{formatCurrency(stats.totalDailyLimit, i18n.language)}</span>
-
+              </div>
             </div>
 
             <Separator />
@@ -284,118 +284,170 @@ export
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{t('statistics.remainingReceive')}</span>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                <span className="font-bold text-green-600">{formatCurrency(stats.totalDailyRemainingReceive, i18n.language)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar size={20} weight="fill" className="text-accent" />
+              {t('statistics.monthlyLimits')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">{t('statistics.overallUsage')}</span>
+                <span className="text-sm font-semibold">{stats.monthlyUsagePercent.toFixed(1)}%</span>
+              </div>
+              <Progress value={stats.monthlyUsagePercent} className="h-3" indicatorClassName={getProgressColor(stats.monthlyUsagePercent)} />
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">{t('statistics.totalSent')}</span>
+                <span className="font-semibold text-red-600">{formatCurrency(stats.totalMonthlySent, i18n.language)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">{t('statistics.totalReceived')}</span>
+                <span className="font-semibold text-green-600">{formatCurrency(stats.totalMonthlyReceived, i18n.language)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">{t('statistics.totalLimit')}</span>
+                <span className="font-semibold">{formatCurrency(stats.totalMonthlyLimit, i18n.language)}</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-3 bg-muted/30 p-3 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{t('statistics.remainingSend')}</span>
+                <span className="font-bold text-red-600">{formatCurrency(stats.totalMonthlyRemainingSend, i18n.language)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{t('statistics.remainingReceive')}</span>
+                <span className="font-bold text-green-600">{formatCurrency(stats.totalMonthlyRemainingReceive, i18n.language)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Wallet size={20} weight="fill" className="text-primary" />
+              {t('statistics.byType')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {Object.entries(stats.byType).map(([type, data]) => (
+                <div key={type} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {getWalletTypeIcon(type as WalletType)}
+                      <span className="font-medium">{getWalletTypeName(type as WalletType)}</span>
+                    </div>
+                    <Badge variant="secondary">{data.count}</Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm pl-7">
+                    <div className="text-muted-foreground">{t('statistics.balance')}:</div>
+                    <div className="text-right font-semibold">{formatCurrency(data.balance, i18n.language)}</div>
+                    <div className="text-muted-foreground">{t('statistics.dailySent')}:</div>
+                    <div className="text-right text-red-600">{formatCurrency(data.dailySent, i18n.language)}</div>
+                    <div className="text-muted-foreground">{t('statistics.dailyReceived')}:</div>
+                    <div className="text-right text-green-600">{formatCurrency(data.dailyReceived, i18n.language)}</div>
+                  </div>
+                  <Separator />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Percent size={20} weight="fill" className="text-accent" />
+              {t('statistics.byStatus')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Object.entries(stats.byStatus).map(([status, count]) => (
+                <div key={status} className="flex items-center justify-between">
+                  <span className="capitalize">{t(`wallet.status.${status}`)}</span>
+                  <Badge variant={status === 'active' ? 'default' : 'secondary'}>{count}</Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendUp size={20} weight="fill" className="text-primary" />
+              {t('statistics.topByBalance')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {stats.topWalletsByBalance.map((summary, index) => (
+                <div key={summary.wallet.id} className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{summary.wallet.accountName || summary.wallet.accountNumber}</p>
+                    <p className="text-xs text-muted-foreground">{getWalletTypeName(summary.wallet.type)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-primary">{formatCurrency(summary.wallet.balance, i18n.language)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Warning size={20} weight="fill" className="text-orange-600" />
+              {t('statistics.topByUsage')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {stats.topWalletsByDailyUsage.map((summary, index) => (
+                <div key={summary.wallet.id} className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-600/10 text-orange-600 text-sm font-bold">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{summary.wallet.accountName || summary.wallet.accountNumber}</p>
+                    <p className="text-xs text-muted-foreground">{getWalletTypeName(summary.wallet.type)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-orange-600">{summary.dailyPercentage.toFixed(1)}%</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
