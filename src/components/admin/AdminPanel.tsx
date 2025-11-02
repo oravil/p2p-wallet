@@ -98,7 +98,7 @@ export function AdminPanel() {
     setWallets([])
     setTransactions([])
     
-    toast.success('All trader accounts and data have been deleted')
+    toast.success(t('admin.deleteAllAccountsSuccess'))
     setShowDeleteAllDialog(false)
   }
 
@@ -141,7 +141,7 @@ export function AdminPanel() {
         <h1 className="text-3xl font-bold">{t('admin.title')}</h1>
         <Button variant="destructive" onClick={handleDeleteAllAccounts}>
           <Database size={18} weight="bold" className="mr-2" />
-          Delete All Accounts
+          {t('admin.deleteAllAccounts')}
         </Button>
       </div>
 
@@ -209,8 +209,8 @@ export function AdminPanel() {
 
       <Tabs defaultValue="users" className="space-y-6">
         <TabsList>
-          <TabsTrigger value="users">User Management</TabsTrigger>
-          <TabsTrigger value="limits">Default Limits</TabsTrigger>
+          <TabsTrigger value="users">{t('admin.userManagementTab')}</TabsTrigger>
+          <TabsTrigger value="limits">{t('admin.defaultLimitsTab')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
@@ -413,17 +413,17 @@ export function AdminPanel() {
       <Dialog open={showDeleteAllDialog} onOpenChange={setShowDeleteAllDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete All Trader Accounts</DialogTitle>
+            <DialogTitle>{t('admin.deleteAllAccountsTitle')}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete all trader accounts and their data? This action cannot be undone. Admin accounts will not be deleted.
+              {t('admin.deleteAllAccountsDescription')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDeleteAllDialog(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button variant="destructive" onClick={confirmDeleteAllAccounts}>
-              Delete All Accounts
+              {t('admin.deleteAllAccounts')}
             </Button>
           </DialogFooter>
         </DialogContent>

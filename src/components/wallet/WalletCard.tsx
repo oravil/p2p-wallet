@@ -57,21 +57,21 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
         return (
           <Badge variant="secondary" className="gap-1 text-xs bg-yellow-100 text-yellow-800 border-yellow-300">
             <Pause size={12} weight="fill" />
-            Paused
+            {t('wallet.statusPaused')}
           </Badge>
         )
       case 'suspended':
         return (
           <Badge variant="secondary" className="gap-1 text-xs bg-red-100 text-red-800 border-red-300">
             <X size={12} weight="fill" />
-            Suspended
+            {t('wallet.statusSuspended')}
           </Badge>
         )
       case 'issue':
         return (
           <Badge variant="secondary" className="gap-1 text-xs bg-orange-100 text-orange-800 border-orange-300">
             <Warning size={12} weight="fill" />
-            Account Issue
+            {t('wallet.statusIssue')}
           </Badge>
         )
       default:
@@ -82,19 +82,19 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
   const handleDeleteAccount = () => {
     deleteTransactionsByWallet(wallet.id)
     deleteWallet(wallet.id)
-    toast.success('Account and all related transactions deleted successfully')
+    toast.success(t('wallet.deleteAccountSuccess'))
     setShowDeleteDialog(false)
   }
 
   const handleResetDaily = () => {
     resetDailyTransactions(wallet.id)
-    toast.success('Daily limit reset - today\'s transactions have been deleted')
+    toast.success(t('wallet.resetDailySuccess'))
     setShowResetDailyDialog(false)
   }
 
   const handleResetMonthly = () => {
     resetMonthlyTransactions(wallet.id)
-    toast.success('Monthly limit reset - this month\'s transactions have been deleted')
+    toast.success(t('wallet.resetMonthlySuccess'))
     setShowResetMonthlyDialog(false)
   }
 
@@ -177,11 +177,11 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setShowResetDailyDialog(true)}>
                     <ArrowsClockwise size={16} weight="bold" className="mr-2" />
-                    Reset Daily Limit
+                    {t('wallet.resetDaily')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setShowResetMonthlyDialog(true)}>
                     <ArrowsClockwise size={16} weight="bold" className="mr-2" />
-                    Reset Monthly Limit
+                    {t('wallet.resetMonthly')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
@@ -189,7 +189,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash size={16} weight="bold" className="mr-2" />
-                    Delete Account
+                    {t('wallet.deleteAccount')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -236,7 +236,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               className="gap-1"
             >
               <PencilSimple size={14} weight="bold" />
-              <span className="hidden sm:inline">Edit</span>
+              <span className="hidden sm:inline">{t('wallet.edit')}</span>
             </Button>
             <Button
               variant="outline"
@@ -245,7 +245,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               className="gap-1"
             >
               <ClockCounterClockwise size={14} weight="bold" />
-              <span className="hidden sm:inline">History</span>
+              <span className="hidden sm:inline">{t('transaction.history')}</span>
             </Button>
             <div className="col-span-1 grid grid-cols-2 gap-2">
               <div className="flex items-center gap-1">
@@ -290,16 +290,18 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogTitle>{t('wallet.deleteAccountTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this account? This will permanently delete the wallet "{wallet.accountName}" 
-              and all {summary.transactions.length} transaction(s) associated with it. This action cannot be undone.
+              {t('wallet.deleteAccountDescription', { 
+                wallet: wallet.accountName, 
+                count: summary.transactions.length 
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -308,16 +310,15 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
       <AlertDialog open={showResetDailyDialog} onOpenChange={setShowResetDailyDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reset Daily Limit</AlertDialogTitle>
+            <AlertDialogTitle>{t('wallet.resetDailyTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete all transactions made today for "{wallet.accountName}". 
-              Your daily limit usage will be reset to 0%. This action cannot be undone.
+              {t('wallet.resetDailyDescription', { wallet: wallet.accountName })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleResetDaily}>
-              Reset Daily
+              {t('wallet.resetDaily')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -326,16 +327,15 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
       <AlertDialog open={showResetMonthlyDialog} onOpenChange={setShowResetMonthlyDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Reset Monthly Limit</AlertDialogTitle>
+            <AlertDialogTitle>{t('wallet.resetMonthlyTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete all transactions made this month for "{wallet.accountName}". 
-              Your monthly limit usage will be reset to 0%. This action cannot be undone.
+              {t('wallet.resetMonthlyDescription', { wallet: wallet.accountName })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleResetMonthly}>
-              Reset Monthly
+              {t('wallet.resetMonthly')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -9,8 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WalletCard } from '@/components/wallet/WalletCard'
 import { AddWalletDialog } from '@/components/wallet/AddWalletDialog'
 import { ImportWalletsDialog } from '@/components/wallet/ImportWalletsDialog'
+import { BulkActionsDialog } from '@/components/wallet/BulkActionsDialog'
 import { AdminPanel } from '@/components/admin/AdminPanel'
-import { Plus, SignOut, Translate, Wallet, ShieldCheck, MagnifyingGlass, Upload, Download } from '@phosphor-icons/react'
+import { Plus, SignOut, Translate, Wallet, ShieldCheck, MagnifyingGlass, Upload, Download, CheckSquare } from '@phosphor-icons/react'
 import { formatCurrency, searchPhoneNumber, exportToCSV, formatDate } from '@/lib/utils'
 
 export function Dashboard() {
@@ -21,6 +22,7 @@ export function Dashboard() {
   useLimitWarnings(summaries)
   const [showAddWallet, setShowAddWallet] = useState(false)
   const [showImportWallets, setShowImportWallets] = useState(false)
+  const [showBulkActions, setShowBulkActions] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -150,7 +152,7 @@ export function Dashboard() {
                     <div className="relative">
                       <MagnifyingGlass size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                       <Input
-                        placeholder="Search by 4 digits or name..."
+                        placeholder={t('dashboard.searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-10 w-[200px]"
@@ -158,11 +160,15 @@ export function Dashboard() {
                     </div>
                     <Button variant="outline" onClick={() => setShowImportWallets(true)}>
                       <Upload size={20} weight="bold" />
-                      <span className="ml-2 hidden sm:inline">Import</span>
+                      <span className="ml-2 hidden sm:inline">{t('dashboard.import')}</span>
                     </Button>
                     <Button variant="outline" onClick={handleExportWallets} disabled={summaries.length === 0}>
                       <Download size={20} weight="bold" />
-                      <span className="ml-2 hidden sm:inline">Export</span>
+                      <span className="ml-2 hidden sm:inline">{t('dashboard.export')}</span>
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowBulkActions(true)} disabled={summaries.length === 0}>
+                      <CheckSquare size={20} weight="bold" />
+                      <span className="ml-2 hidden sm:inline">{t('admin.bulkActions')}</span>
                     </Button>
                     <Button onClick={() => setShowAddWallet(true)}>
                       <Plus size={20} weight="bold" />
@@ -181,7 +187,7 @@ export function Dashboard() {
                   </div>
                 ) : filteredSummaries.length === 0 ? (
                   <div className="text-center py-12 bg-card rounded-lg border">
-                    <p className="text-muted-foreground">No wallets match your search</p>
+                    <p className="text-muted-foreground">{t('dashboard.noWalletsMatch')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -201,7 +207,7 @@ export function Dashboard() {
           <div className="container mx-auto px-4 py-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-card p-4 rounded-lg border">
-                <p className="text-sm text-muted-foreground">Total Balance</p>
+                <p className="text-sm text-muted-foreground">{t('dashboard.totalBalance')}</p>
                 <p className="text-2xl font-bold text-primary">{formatCurrency(totalBalance, i18n.language)}</p>
               </div>
               <div className="bg-card p-4 rounded-lg border">
@@ -213,7 +219,7 @@ export function Dashboard() {
                 <p className="text-2xl font-bold text-green-600">{formatCurrency(totalReceived, i18n.language)}</p>
               </div>
               <div className="bg-card p-4 rounded-lg border">
-                <p className="text-sm text-muted-foreground">Wallets at Risk</p>
+                <p className="text-sm text-muted-foreground">{t('dashboard.walletsAtRisk')}</p>
                 <p className="text-2xl font-bold text-orange-600">{walletsAtRisk}</p>
               </div>
             </div>
@@ -255,7 +261,7 @@ export function Dashboard() {
               </div>
             ) : filteredSummaries.length === 0 ? (
               <div className="text-center py-12 bg-card rounded-lg border">
-                <p className="text-muted-foreground">No wallets match your search</p>
+                <p className="text-muted-foreground">{t('dashboard.noWalletsMatch')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -270,6 +276,11 @@ export function Dashboard() {
 
       <AddWalletDialog open={showAddWallet} onOpenChange={setShowAddWallet} />
       <ImportWalletsDialog open={showImportWallets} onOpenChange={setShowImportWallets} />
+      <BulkActionsDialog 
+        open={showBulkActions} 
+        onOpenChange={setShowBulkActions}
+        wallets={summaries.map(s => s.wallet)}
+      />
     </div>
   )
 }

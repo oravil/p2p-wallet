@@ -80,22 +80,22 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Wallet Details</DialogTitle>
+          <DialogTitle>{t('wallet.editWalletDetails')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Wallet Name</Label>
+            <Label>{t('wallet.walletName')}</Label>
             <Input value={wallet.accountName} disabled className="bg-muted" />
           </div>
 
           <div className="space-y-2">
-            <Label>Account Number</Label>
+            <Label>{t('wallet.accountNumber')}</Label>
             <Input value={wallet.accountNumber} disabled className="bg-muted" />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-balance">Current Balance (EGP)</Label>
+            <Label htmlFor="edit-balance">{t('wallet.currentBalance')}</Label>
             <Input
               id="edit-balance"
               type="number"
@@ -108,7 +108,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-dailyLimit">{t('wallet.dailyLimit')} (EGP)</Label>
+            <Label htmlFor="edit-dailyLimit">{t('wallet.dailyLimit')}</Label>
             <Input
               id="edit-dailyLimit"
               type="number"
@@ -121,7 +121,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-monthlyLimit">{t('wallet.monthlyLimit')} (EGP)</Label>
+            <Label htmlFor="edit-monthlyLimit">{t('wallet.monthlyLimit')}</Label>
             <Input
               id="edit-monthlyLimit"
               type="number"
@@ -134,7 +134,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-remainingManual">Remaining Manual Override (EGP)</Label>
+            <Label htmlFor="edit-remainingManual">{t('wallet.remainingManual')}</Label>
             <Input
               id="edit-remainingManual"
               type="number"
@@ -142,15 +142,15 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
               min="0"
               value={formData.remainingManual}
               onChange={(e) => setFormData({ ...formData, remainingManual: e.target.value })}
-              placeholder="Leave 0 for automatic calculation"
+              placeholder={t('wallet.remainingManualPlaceholder')}
             />
             <p className="text-xs text-muted-foreground">
-              Set a manual remaining limit override. Leave at 0 to use automatic calculation.
+              {t('wallet.remainingManualHelp')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-status">Account Status</Label>
+            <Label htmlFor="edit-status">{t('wallet.accountStatus')}</Label>
             <Select
               value={formData.status}
               onValueChange={(value: AccountStatus) => setFormData({ ...formData, status: value })}
@@ -159,31 +159,31 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="paused">Paused</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-                <SelectItem value="issue">Bank/Mobile Account Issue</SelectItem>
+                <SelectItem value="active">{t('wallet.statusActive')}</SelectItem>
+                <SelectItem value="paused">{t('wallet.statusPaused')}</SelectItem>
+                <SelectItem value="suspended">{t('wallet.statusSuspended')}</SelectItem>
+                <SelectItem value="issue">{t('wallet.statusIssue')}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              {formData.status === 'active' && 'Account is operational and can process transactions'}
-              {formData.status === 'paused' && 'Account is temporarily paused - no transactions allowed'}
-              {formData.status === 'suspended' && 'Account is suspended due to policy violation'}
-              {formData.status === 'issue' && 'Account has technical issues with bank or mobile provider'}
+              {formData.status === 'active' && t('wallet.accountStatusActive')}
+              {formData.status === 'paused' && t('wallet.accountStatusPaused')}
+              {formData.status === 'suspended' && t('wallet.accountStatusSuspended')}
+              {formData.status === 'issue' && t('wallet.accountStatusIssue')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="edit-note">Account Note</Label>
+            <Label htmlFor="edit-note">{t('wallet.accountNote')}</Label>
             <Textarea
               id="edit-note"
               value={formData.note}
               onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-              placeholder="Add notes about this account (e.g., reason for suspension, issue details, etc.)"
+              placeholder={t('wallet.accountNotePlaceholder')}
               rows={3}
             />
             <p className="text-xs text-muted-foreground">
-              Internal notes for tracking account status, issues, or important information.
+              {t('wallet.accountNoteHelp')}
             </p>
           </div>
 
@@ -192,7 +192,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
               {t('common.cancel')}
             </Button>
             <Button type="submit">
-              Save Changes
+              {t('wallet.saveChanges')}
             </Button>
           </div>
         </form>
