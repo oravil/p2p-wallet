@@ -13,18 +13,18 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 ## Essential Features
 
 ### User Authentication & Authorization
-- **Functionality**: Register, login, logout with JWT-based session management and role-based access control. First registered user automatically becomes admin with pro subscription.
-- **Purpose**: Secure access to sensitive financial data and enable admin capabilities
-- **Trigger**: Landing page with login/register forms, or admin accessing restricted routes
-- **Progression**: Enter credentials → validate → generate JWT → store token → redirect to dashboard → first user gets admin role and pro subscription automatically
-- **Success criteria**: Users can only access their own wallet data; admins can view all users; tokens expire appropriately; first account is admin with full control
+- **Functionality**: Single admin account with default credentials (eng.ay88@gmail.com / adminadmin) created on first app launch. Admin must change password on first login. No public registration.
+- **Purpose**: Secure single-admin access with mandatory password change for security
+- **Trigger**: Landing page with login form, or admin accessing restricted routes
+- **Progression**: Enter credentials → validate → force password change if first login → redirect to dashboard
+- **Success criteria**: Admin can access all features; password must be changed on first login; new password must be at least 6 characters
 
 ### Wallet & Bank Account Management
-- **Functionality**: Add/edit/delete multiple e-wallets (Vodafone Cash, Orange, Etisalat, InstaPay) and bank accounts with custom daily/monthly limits
-- **Purpose**: Centralize all payment methods in one place for comprehensive limit tracking
+- **Functionality**: Add/edit/delete multiple e-wallets (Vodafone Cash, Orange, Etisalat, InstaPay) and bank accounts with customizable daily/monthly limits. Default limits are automatically populated based on wallet type: Mobile wallets (60K daily, 200K monthly), InstaPay/Bank (70K per transaction, 120K daily, 400K monthly). Admin can modify default limits from admin panel.
+- **Purpose**: Centralize all payment methods with intelligent default limits that match Egyptian banking regulations
 - **Trigger**: Dashboard "Add Wallet" or "Add Bank Account" button
-- **Progression**: Click add → select wallet type → enter account details → set limits → save → appears in dashboard list
-- **Success criteria**: All wallets display with correct limits, can be edited or removed, data persists between sessions
+- **Progression**: Click add → select wallet type → defaults auto-populate → optionally adjust limits → enter account details → save → appears in dashboard list
+- **Success criteria**: All wallets display with correct limits, defaults match wallet type, traders can customize limits, admin can change system defaults, data persists between sessions
 
 ### Transaction Tracking
 - **Functionality**: Manual entry of sent/received transactions with real-time calculation of daily and monthly totals against limits, including automated warnings at 80% usage
@@ -55,11 +55,11 @@ A bilingual progressive web app (PWA) empowering Egyptian P2P traders to manage 
 - **Success criteria**: All text translates correctly, layouts flip appropriately, preference persists across sessions
 
 ### Admin Panel
-- **Functionality**: User management (view, edit status, suspend, ban, delete), subscription management (upgrade/downgrade users), view all user wallets and transactions, global statistics dashboard
-- **Purpose**: Enable platform oversight, customer support operations, and full administrative control
+- **Functionality**: User management (view, edit status, suspend, ban, delete), subscription management (upgrade/downgrade users), view all user wallets and transactions, global statistics dashboard, manage default wallet limits for all wallet types, bulk delete all trader accounts
+- **Purpose**: Enable platform oversight, configure system defaults, manage users, and perform administrative cleanup operations
 - **Trigger**: Admin user logs in and navigates to admin tab (visible only to admin role)
-- **Progression**: Admin dashboard → view statistics → select user management → view user list with details → click edit → modify status/subscription → view wallets/transactions → confirm changes → delete users if needed → changes persist immediately
-- **Success criteria**: Only admin role can access panel, all actions persist correctly, changes reflect immediately, admins can view and manage all users' data, delete users with cascade deletion of wallets and transactions, cannot edit or delete themselves
+- **Progression**: Admin dashboard → view statistics → select user management or default limits → modify as needed → delete individual users or bulk delete all → changes persist immediately
+- **Success criteria**: Only admin role can access panel, all actions persist correctly, changes reflect immediately, admins can view and manage all users' data, delete users with cascade deletion of wallets and transactions, cannot edit or delete themselves, can set system-wide default limits, can bulk delete all trader accounts while preserving admin accounts
 
 ### Daily/Monthly Summary & Reports
 - **Functionality**: Aggregated view of all transactions across all wallets showing totals, patterns, and limit compliance

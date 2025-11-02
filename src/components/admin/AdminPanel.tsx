@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Users, ChartBar, Crown, Wallet as WalletIcon, ArrowsLeftRight, ShieldCheck, UserGear, Trash } from '@phosphor-icons/react'
+import { Users, ChartBar, Crown, Wallet as WalletIcon, ArrowsLeftRight, ShieldCheck, UserGear, Trash, Database } from '@phosphor-icons/react'
+import { DefaultLimitsManager } from './DefaultLimitsManager'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 
@@ -22,6 +23,7 @@ export function AdminPanel() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showUserDialog, setShowUserDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false)
 
   const totalUsers = users?.length || 0
   const activeUsers = users?.filter(u => u.status === 'active').length || 0
@@ -86,6 +88,20 @@ export function AdminPanel() {
     setSelectedUser(null)
   }
 
+  const handleDeleteAllAccounts = () => {
+    setShowDeleteAllDialog(true)
+  }
+
+  const confirmDeleteAllAccounts = () => {
+    const adminUsers = users?.filter(u => u.role === 'admin') || []
+    setUsers(adminUsers)
+    setWallets([])
+    setTransactions([])
+    
+    toast.success('All trader accounts and data have been deleted')
+    setShowDeleteAllDialog(false)
+  }
+
   const handleUpdateUserStatus = (status: UserStatus) => {
     if (!selectedUser) return
     
@@ -121,7 +137,13 @@ export function AdminPanel() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold mb-6">{t('admin.title')}</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">{t('admin.title')}</h1>
+        <Button variant="destructive" onClick={handleDeleteAllAccounts}>
+          <Database size={18} weight="bold" className="mr-2" />
+          Delete All Accounts
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Card>
@@ -185,58 +207,71 @@ export function AdminPanel() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('admin.userManagement')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('auth.fullName')}</TableHead>
-                <TableHead>{t('auth.email')}</TableHead>
-                <TableHead>{t('admin.role')}</TableHead>
-                <TableHead>{t('admin.status')}</TableHead>
-                <TableHead>{t('admin.subscription')}</TableHead>
-                <TableHead>{t('admin.wallets')}</TableHead>
-                <TableHead>{t('admin.actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users?.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.fullName}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{getRoleBadge(user.role)}</TableCell>
-                  <TableCell>{getStatusBadge(user.status)}</TableCell>
-                  <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
-                  <TableCell>{getUserWallets(user.id).length}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleEditUser(user)}
-                        disabled={user.id === currentUser?.id}
-                      >
-                        <UserGear size={16} weight="bold" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDeleteUser(user)}
-                        disabled={user.id === currentUser?.id}
-                      >
-                        <Trash size={16} weight="bold" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="users" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="limits">Default Limits</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="users" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('admin.userManagement')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t('auth.fullName')}</TableHead>
+                    <TableHead>{t('auth.email')}</TableHead>
+                    <TableHead>{t('admin.role')}</TableHead>
+                    <TableHead>{t('admin.status')}</TableHead>
+                    <TableHead>{t('admin.subscription')}</TableHead>
+                    <TableHead>{t('admin.wallets')}</TableHead>
+                    <TableHead>{t('admin.actions')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users?.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.fullName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{getRoleBadge(user.role)}</TableCell>
+                      <TableCell>{getStatusBadge(user.status)}</TableCell>
+                      <TableCell>{getSubscriptionBadge(user.subscription)}</TableCell>
+                      <TableCell>{getUserWallets(user.id).length}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleEditUser(user)}
+                            disabled={user.id === currentUser?.id}
+                          >
+                            <UserGear size={16} weight="bold" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleDeleteUser(user)}
+                            disabled={user.id === currentUser?.id}
+                          >
+                            <Trash size={16} weight="bold" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="limits">
+          <DefaultLimitsManager />
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
         <DialogContent className="max-w-2xl">
@@ -370,6 +405,25 @@ export function AdminPanel() {
             </Button>
             <Button variant="destructive" onClick={confirmDeleteUser}>
               {t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteAllDialog} onOpenChange={setShowDeleteAllDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete All Trader Accounts</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete all trader accounts and their data? This action cannot be undone. Admin accounts will not be deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteAllDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteAllAccounts}>
+              Delete All Accounts
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -7,6 +7,9 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { WalletType } from '@/lib/types'
 import { useWallets } from '@/hooks/use-data'
+import { getDefaultLimits } from '@/lib/defaults'
+import { useKV } from '@github/spark/hooks'
+import { DefaultLimits, INITIAL_DEFAULT_LIMITS } from '@/lib/defaults'
 import { toast } from 'sonner'
 
 interface AddWalletDialogProps {
@@ -17,14 +20,39 @@ interface AddWalletDialogProps {
 export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
   const { t } = useTranslation()
   const { addWallet } = useWallets()
+  const [defaultLimits] = useKV<DefaultLimits>('default-limits', INITIAL_DEFAULT_LIMITS)
   const [formData, setFormData] = useState({
     type: 'vodafone' as WalletType,
     accountNumber: '',
     accountName: '',
     bankName: '',
     dailyLimit: '',
-    monthlyLimit: ''
+    monthlyLimit: '',
+    perTransactionLimit: ''
   })
+
+  useEffect(() => {
+    if (open && defaultLimits) {
+      const limits = getDefaultLimits(formData.type, defaultLimits)
+      setFormData(prev => ({
+        ...prev,
+        dailyLimit: limits.dailyLimit.toString(),
+        monthlyLimit: limits.monthlyLimit.toString(),
+        perTransactionLimit: limits.perTransactionLimit?.toString() || ''
+      }))
+    }
+  }, [open, formData.type, defaultLimits])
+
+  const handleTypeChange = (newType: WalletType) => {
+    const limits = getDefaultLimits(newType, defaultLimits)
+    setFormData({
+      ...formData,
+      type: newType,
+      dailyLimit: limits.dailyLimit.toString(),
+      monthlyLimit: limits.monthlyLimit.toString(),
+      perTransactionLimit: limits.perTransactionLimit?.toString() || ''
+    })
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,8 +65,8 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       return
     }
 
-    if (monthlyLimit < dailyLimit * 30) {
-      toast.error('Monthly limit should be at least 30 times the daily limit')
+    if (monthlyLimit < dailyLimit) {
+      toast.error('Monthly limit should be at least equal to daily limit')
       return
     }
 
@@ -58,7 +86,8 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       accountName: '',
       bankName: '',
       dailyLimit: '',
-      monthlyLimit: ''
+      monthlyLimit: '',
+      perTransactionLimit: ''
     })
     onOpenChange(false)
   }
@@ -73,7 +102,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="type">{t('wallet.type')}</Label>
-            <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v as WalletType })}>
+            <Select value={formData.type} onValueChange={(v) => handleTypeChange(v as WalletType)}>
               <SelectTrigger id="type">
                 <SelectValue />
               </SelectTrigger>
@@ -122,8 +151,25 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
             </div>
           )}
 
+          {(formData.type === 'instapay' || formData.type === 'bank') && formData.perTransactionLimit && (
+            <div className="space-y-2">
+              <Label htmlFor="perTransactionLimit">Per Transaction Limit (EGP)</Label>
+              <Input
+                id="perTransactionLimit"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.perTransactionLimit}
+                onChange={(e) => setFormData({ ...formData, perTransactionLimit: e.target.value })}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">Default limit for {formData.type === 'instapay' ? 'InstaPay' : 'Banking'}</p>
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="dailyLimit">{t('wallet.dailyLimit')}</Label>
+            <Label htmlFor="dailyLimit">{t('wallet.dailyLimit')} (EGP)</Label>
             <Input
               id="dailyLimit"
               type="number"
@@ -136,7 +182,7 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="monthlyLimit">{t('wallet.monthlyLimit')}</Label>
+            <Label htmlFor="monthlyLimit">{t('wallet.monthlyLimit')} (EGP)</Label>
             <Input
               id="monthlyLimit"
               type="number"

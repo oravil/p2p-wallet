@@ -12,11 +12,13 @@ export interface User {
   id: string
   email: string
   fullName: string
+  password: string
   role: UserRole
   status: UserStatus
   subscription: SubscriptionTier
   apiKey?: string
   createdAt: string
+  mustChangePassword?: boolean
 }
 
 export interface Wallet {
