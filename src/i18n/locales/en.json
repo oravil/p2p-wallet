@@ -48,7 +48,9 @@
     "sortDailyHigh": "Daily Remaining (High to Low)",
     "sortDailyLow": "Daily Remaining (Low to High)",
     "sortMonthlyHigh": "Monthly Remaining (High to Low)",
-    "sortMonthlyLow": "Monthly Remaining (Low to High)"
+    "sortMonthlyLow": "Monthly Remaining (Low to High)",
+    "refresh": "Refresh Data",
+    "refreshed": "Data refreshed successfully"
   },
   "wallet": {
     "type": "Wallet Type",
@@ -108,7 +110,8 @@
     "deleteAccountDescription": "Are you sure you want to delete this account? This will permanently delete the wallet \"{wallet}\" and all {count} transaction(s) associated with it. This action cannot be undone.",
     "resetDailySuccess": "Daily limit reset - today's transactions have been deleted",
     "resetMonthlySuccess": "Monthly limit reset - this month's transactions have been deleted",
-    "deleteAccountSuccess": "Account and all related transactions deleted successfully"
+    "deleteAccountSuccess": "Account and all related transactions deleted successfully",
+    "canReceive": "Can Receive"
   },
   "transaction": {
     "add": "Add Transaction",
@@ -281,13 +284,22 @@
     "verificationRequired": "Email Verification Required",
     "verificationMessage": "You must verify your email within 24 hours to continue using all features. Check your inbox for the verification link.",
     "sendVerification": "Resend Verification Email",
-    "verificationEmailSent": "Verification email sent successfully"
+    "verificationEmailSent": "Verification email sent successfully",
+    "appearance": "Appearance",
+    "appearanceDescription": "Customize the look and feel of the application",
+    "darkMode": "Dark Mode",
+    "darkModeDescription": "Switch between light and dark themes",
+    "description": "Manage your personal information",
+    "updated": "Profile updated successfully",
+    "passwordChanged": "Password changed successfully",
+    "incorrectPassword": "Current password is incorrect"
   },
   "limits": {
     "safe": "Safe",
     "warning": "Warning",
     "critical": "Critical",
     "exceeded": "Exceeded",
+    "lowRisk": "Low Risk",
     "dailyUsage": "Daily Usage",
     "monthlyUsage": "Monthly Usage",
     "availableToday": "Available Today",

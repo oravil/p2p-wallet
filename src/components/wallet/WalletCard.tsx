@@ -45,9 +45,10 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showResetDailyDialog, setShowResetDailyDialog] = useState(false)
   const [showResetMonthlyDialog, setShowResetMonthlyDialog] = useState(false)
-  const { wallet, dailyPercentage, monthlyPercentage, dailyRemaining, monthlyRemaining } = summary
+  const { wallet, dailyPercentage, monthlyPercentage, dailyRemaining, monthlyRemaining, dailyRemainingReceive } = summary
 
   const isAtRisk = dailyPercentage >= 80 || monthlyPercentage >= 80
+  const isLowRisk = dailyPercentage < 50
   const isExceeded = dailyPercentage >= 100 || monthlyPercentage >= 100
 
   const getStatusBadge = () => {
@@ -147,6 +148,12 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                       {t('limits.warning')}
                     </Badge>
                   )}
+                  {isLowRisk && !isAtRisk && !isExceeded && (
+                    <Badge variant="outline" className="gap-1 text-xs border-green-500 text-green-600 bg-green-50">
+                      <Warning size={12} weight="fill" />
+                      {t('limits.lowRisk')}
+                    </Badge>
+                  )}
                 </div>
                 <p className="text-sm text-muted-foreground">{getWalletTypeName()}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{wallet.accountNumber}</p>
@@ -210,6 +217,11 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               <div className="flex items-center justify-between mt-1.5 text-xs text-muted-foreground">
                 <span>{formatCurrency(dailyRemaining, i18n.language)} {t('dashboard.remaining')}</span>
                 <span>{formatCurrency(wallet.dailyLimit, i18n.language)}</span>
+              </div>
+              <div className="flex items-center justify-between mt-1 text-xs">
+                <span className="text-green-600 font-medium">
+                  {t('wallet.canReceive')}: {formatCurrency(dailyRemainingReceive, i18n.language)}
+                </span>
               </div>
             </div>
 
