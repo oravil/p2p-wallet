@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Wallet, TransactionType } from '@/lib/types'
+import { Wallet, TransactionType, WalletSummary } from '@/lib/types'
 import { useTransactions } from '@/hooks/use-data'
 import { toast } from 'sonner'
 import { ArrowUp, ArrowDown, Bank } from '@phosphor-icons/react'
@@ -14,9 +14,10 @@ interface AddTransactionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   wallet: Wallet
+  summary?: WalletSummary
 }
 
-export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransactionDialogProps) {
+export function AddTransactionDialog({ open, onOpenChange, wallet, summary }: AddTransactionDialogProps) {
   const { t } = useTranslation()
   const { addTransaction } = useTransactions()
   const [type, setType] = useState<TransactionType>('send')
@@ -46,6 +47,28 @@ export function AddTransactionDialog({ open, onOpenChange, wallet }: AddTransact
     if ((type === 'send' || type === 'withdraw') && amountNum > (wallet.balance || 0)) {
       toast.error('Insufficient balance. Cannot send/withdraw amount greater than current balance.')
       return
+    }
+
+    if (summary) {
+      if (type === 'send' || type === 'withdraw') {
+        if (amountNum > summary.dailyRemaining) {
+          toast.error(`Cannot send ${amountNum} EGP. Daily remaining send limit is ${summary.dailyRemaining} EGP.`)
+          return
+        }
+        if (amountNum > summary.monthlyRemaining) {
+          toast.error(`Cannot send ${amountNum} EGP. Monthly remaining send limit is ${summary.monthlyRemaining} EGP.`)
+          return
+        }
+      } else if (type === 'receive') {
+        if (amountNum > summary.dailyRemainingReceive) {
+          toast.error(`Cannot receive ${amountNum} EGP. Daily remaining receive limit is ${summary.dailyRemainingReceive} EGP.`)
+          return
+        }
+        if (amountNum > summary.monthlyRemainingReceive) {
+          toast.error(`Cannot receive ${amountNum} EGP. Monthly remaining receive limit is ${summary.monthlyRemainingReceive} EGP.`)
+          return
+        }
+      }
     }
 
     try {

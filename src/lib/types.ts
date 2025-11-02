@@ -21,6 +21,10 @@ export interface User {
   apiKey?: string
   createdAt: string
   mustChangePassword?: boolean
+  emailVerified?: boolean
+  emailVerificationSentAt?: string
+  phone?: string
+  address?: string
 }
 
 export interface Wallet {
@@ -50,6 +54,7 @@ export interface Transaction {
   description: string
   date: string
   createdAt: string
+  screenshot?: string
 }
 
 export interface WalletSummary {
@@ -59,7 +64,9 @@ export interface WalletSummary {
   monthlySent: number
   monthlyReceived: number
   dailyRemaining: number
+  dailyRemainingReceive: number
   monthlyRemaining: number
+  monthlyRemainingReceive: number
   dailyPercentage: number
   monthlyPercentage: number
   transactions: Transaction[]

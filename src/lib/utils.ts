@@ -72,11 +72,11 @@ export function calculateWalletSummary(
 
   const currentBalance = wallet.balance || 0
 
-  let dailyRemainingSend = Math.min(wallet.dailyLimit - dailySent, currentBalance, 60000)
-  let dailyRemainingReceive = Math.max(0, 60000 - currentBalance - dailyReceived)
+  let dailyRemainingSend = Math.min(wallet.dailyLimit - dailySent, currentBalance)
+  let dailyRemainingReceive = Math.max(0, wallet.dailyLimit - currentBalance - dailyReceived)
 
-  let monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance, 200000)
-  let monthlyRemainingReceive = Math.max(0, 200000 - currentBalance - monthlyReceived)
+  let monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance)
+  let monthlyRemainingReceive = Math.max(0, wallet.monthlyLimit - currentBalance - monthlyReceived)
 
   if (wallet.remainingDailyManual !== undefined && wallet.remainingDailyManual >= 0) {
     dailyRemainingSend = wallet.remainingDailyManual
@@ -85,8 +85,8 @@ export function calculateWalletSummary(
 
   if (wallet.remainingMonthlyManual !== undefined && wallet.remainingMonthlyManual >= 0) {
     if (wallet.manualLimitType === 'this-month-only' && wallet.manualLimitMonth !== currentMonthKey) {
-      monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance, 200000)
-      monthlyRemainingReceive = Math.max(0, 200000 - currentBalance - monthlyReceived)
+      monthlyRemainingSend = Math.min(wallet.monthlyLimit - monthlySent, currentBalance)
+      monthlyRemainingReceive = Math.max(0, wallet.monthlyLimit - currentBalance - monthlyReceived)
     } else {
       monthlyRemainingSend = wallet.remainingMonthlyManual
       monthlyRemainingReceive = wallet.remainingMonthlyManual
@@ -106,7 +106,9 @@ export function calculateWalletSummary(
     monthlySent,
     monthlyReceived,
     dailyRemaining: Math.max(0, dailyRemainingSend),
+    dailyRemainingReceive: Math.max(0, dailyRemainingReceive),
     monthlyRemaining: Math.max(0, monthlyRemainingSend),
+    monthlyRemainingReceive: Math.max(0, monthlyRemainingReceive),
     dailyPercentage: Math.min(100, dailyPercentage),
     monthlyPercentage: Math.min(100, monthlyPercentage),
     transactions: transactions.sort(

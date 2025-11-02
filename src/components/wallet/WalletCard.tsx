@@ -273,6 +273,7 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
         open={showAddTransaction}
         onOpenChange={setShowAddTransaction}
         wallet={wallet}
+        summary={summary}
       />
       
       <EditWalletDialog
