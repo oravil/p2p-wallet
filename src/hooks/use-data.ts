@@ -70,8 +70,9 @@ export function useTransactions(walletId?: string) {
       const wallets = current || []
       return wallets.map(w => {
         if (w.id === transaction.walletId) {
+          const currentBalance = w.balance || 0
           const balanceChange = transaction.type === 'receive' ? transaction.amount : -transaction.amount
-          return { ...w, balance: w.balance + balanceChange }
+          return { ...w, balance: currentBalance + balanceChange }
         }
         return w
       })

@@ -45,7 +45,7 @@ export function Dashboard() {
 
   const totalSent = summaries.reduce((sum, s) => sum + s.dailySent, 0)
   const totalReceived = summaries.reduce((sum, s) => sum + s.dailyReceived, 0)
-  const totalBalance = summaries.reduce((sum, s) => sum + s.wallet.balance, 0)
+  const totalBalance = summaries.reduce((sum, s) => sum + (s.wallet.balance || 0), 0)
   const walletsAtRisk = summaries.filter(s => s.dailyPercentage >= 70 || s.monthlyPercentage >= 70).length
 
   const handleExportWallets = () => {
@@ -53,7 +53,7 @@ export function Dashboard() {
       Name: s.wallet.accountName,
       Type: s.wallet.type,
       'Account Number': s.wallet.accountNumber,
-      Balance: s.wallet.balance,
+      Balance: s.wallet.balance || 0,
       'Daily Limit': s.wallet.dailyLimit,
       'Monthly Limit': s.wallet.monthlyLimit,
       'Daily Sent': s.dailySent,

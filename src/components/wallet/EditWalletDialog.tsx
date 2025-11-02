@@ -26,7 +26,7 @@ export function EditWalletDialog({ open, onOpenChange, wallet }: EditWalletDialo
   useEffect(() => {
     if (wallet && open) {
       setFormData({
-        balance: wallet.balance.toString(),
+        balance: (wallet.balance || 0).toString(),
         dailyLimit: wallet.dailyLimit.toString(),
         monthlyLimit: wallet.monthlyLimit.toString()
       })

@@ -72,7 +72,11 @@ export function ImportWalletsDialog({ open, onOpenChange }: ImportWalletsDialogP
     }
 
     setImporting(false)
-    toast.success(`Imported ${imported} wallets. Skipped ${skipped} (duplicates or invalid).`)
+    if (imported === 0 && skipped > 0) {
+      toast.error(`All ${skipped} entries were skipped (duplicates or invalid). Phone numbers must be unique.`)
+    } else {
+      toast.success(`Imported ${imported} wallets. Skipped ${skipped} (duplicates or invalid).`)
+    }
     setTextInput('')
     onOpenChange(false)
   }
@@ -150,7 +154,11 @@ export function ImportWalletsDialog({ open, onOpenChange }: ImportWalletsDialogP
     }
 
     setImporting(false)
-    toast.success(`Imported ${imported} wallets. Skipped ${skipped} (duplicates or invalid).`)
+    if (imported === 0 && skipped > 0) {
+      toast.error(`All ${skipped} entries were skipped (duplicates or invalid). Phone numbers must be unique.`)
+    } else {
+      toast.success(`Imported ${imported} wallets. Skipped ${skipped} (duplicates or invalid).`)
+    }
     setCsvInput('')
     onOpenChange(false)
   }

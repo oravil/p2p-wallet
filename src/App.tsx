@@ -4,11 +4,13 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AuthPage } from '@/components/auth/AuthPage'
 import { Dashboard } from '@/components/dashboard/Dashboard'
 import { Toaster } from '@/components/ui/sonner'
+import { useDataMigration } from '@/hooks/use-data-migration'
 import '@/i18n/config'
 
 function AppContent() {
     const { user, isLoading } = useAuth()
     const { i18n } = useTranslation()
+    const { migrationComplete } = useDataMigration()
 
     useEffect(() => {
         const lang = i18n.language
@@ -16,7 +18,7 @@ function AppContent() {
         document.documentElement.setAttribute('lang', lang)
     }, [i18n.language])
 
-    if (isLoading) {
+    if (isLoading || !migrationComplete) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
                 <p className="text-muted-foreground">Loading...</p>

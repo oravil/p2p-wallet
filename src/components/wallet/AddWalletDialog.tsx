@@ -75,12 +75,18 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
     }
 
     const normalizedNumber = normalizePhoneNumber(formData.accountNumber)
+    
+    if (normalizedNumber.length < 10) {
+      toast.error('Phone number must be at least 10 digits')
+      return
+    }
+
     const existingWallet = (allWallets || []).find(
       w => normalizePhoneNumber(w.accountNumber) === normalizedNumber
     )
 
     if (existingWallet) {
-      toast.error('This mobile number already exists in your wallets')
+      toast.error('This mobile number already exists. Phone numbers must be unique.')
       return
     }
 
