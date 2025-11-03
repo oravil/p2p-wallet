@@ -204,7 +204,16 @@
     "resetDailyLimits": "إعادة تعيين الحدود اليومية",
     "resetMonthlyLimits": "إعادة تعيين الحدود الشهرية",
     "bulkActionsSuccess": "تم إكمال الإجراء الجماعي بنجاح",
-    "noAccountsSelected": "لم يتم اختيار أي حسابات. يرجى اختيار حساب واحد على الأقل."
+    "noAccountsSelected": "لم يتم اختيار أي حسابات. يرجى اختيار حساب واحد على الأقل.",
+    "themeTab": "إعدادات المظهر",
+    "themeSettings": "إعدادات المظهر",
+    "themeSettingsDescription": "قم بتخصيص مظهر التطبيق باستخدام السمات المعدة مسبقًا أو إنشاء نظام ألوان مخصص خاص بك",
+    "presetThemes": "السمات المعدة مسبقًا",
+    "customTheme": "سمة مخصصة",
+    "borderRadius": "نصف قطر الحدود",
+    "themeUpdated": "تم تحديث المظهر بنجاح",
+    "themePresetApplied": "تم تطبيق سمة {{name}}",
+    "themeReset": "تمت إعادة تعيين المظهر إلى الافتراضي"
   },
   "subscription": {
     "title": "الاشتراك",
@@ -257,7 +266,13 @@
     "help": "المساعدة",
     "about": "حول",
     "optional": "اختياري",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+    "apply": "تطبيق",
+    "active": "نشط",
+    "applyChanges": "تطبيق التغييرات",
+    "reset": "إعادة تعيين",
+    "collapse": "طي",
+    "expand": "توسيع"
   },
   "profile": {
     "title": "الملف الشخصي",

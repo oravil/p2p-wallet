@@ -204,7 +204,16 @@
     "resetDailyLimits": "Reset Daily Limits",
     "resetMonthlyLimits": "Reset Monthly Limits",
     "bulkActionsSuccess": "Bulk action completed successfully",
-    "noAccountsSelected": "No accounts selected. Please select at least one account."
+    "noAccountsSelected": "No accounts selected. Please select at least one account.",
+    "themeTab": "Theme Settings",
+    "themeSettings": "Theme Settings",
+    "themeSettingsDescription": "Customize the application appearance with preset themes or create your own custom color scheme",
+    "presetThemes": "Preset Themes",
+    "customTheme": "Custom Theme",
+    "borderRadius": "Border Radius",
+    "themeUpdated": "Theme updated successfully",
+    "themePresetApplied": "{{name}} theme applied",
+    "themeReset": "Theme reset to default"
   },
   "subscription": {
     "title": "Subscription",
@@ -257,7 +266,13 @@
     "help": "Help",
     "about": "About",
     "optional": "Optional",
-    "actions": "Actions"
+    "actions": "Actions",
+    "apply": "Apply",
+    "active": "Active",
+    "applyChanges": "Apply Changes",
+    "reset": "Reset",
+    "collapse": "Collapse",
+    "expand": "Expand"
   },
   "profile": {
     "title": "User Profile",

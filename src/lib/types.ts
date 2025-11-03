@@ -86,3 +86,35 @@ export interface AdminStats {
   totalWallets: number
   totalTransactions: number
 }
+
+export interface ThemeColors {
+  background: string
+  foreground: string
+  card: string
+  cardForeground: string
+  popover: string
+  popoverForeground: string
+  primary: string
+  primaryForeground: string
+  secondary: string
+  secondaryForeground: string
+  accent: string
+  accentForeground: string
+  muted: string
+  mutedForeground: string
+  destructive: string
+  destructiveForeground: string
+  success: string
+  successForeground: string
+  warning: string
+  warningForeground: string
+  border: string
+  input: string
+  ring: string
+}
+
+export interface AppTheme {
+  name: string
+  colors: ThemeColors
+  radius: string
+}

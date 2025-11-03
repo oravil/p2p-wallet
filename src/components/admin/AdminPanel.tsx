@@ -9,8 +9,9 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Users, ChartBar, Crown, Wallet as WalletIcon, ArrowsLeftRight, ShieldCheck, UserGear, Trash, Database } from '@phosphor-icons/react'
+import { Users, ChartBar, Crown, Wallet as WalletIcon, ArrowsLeftRight, ShieldCheck, UserGear, Trash, Database, Palette } from '@phosphor-icons/react'
 import { DefaultLimitsManager } from './DefaultLimitsManager'
+import { ThemeManager } from './ThemeManager'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 
@@ -211,6 +212,10 @@ export function AdminPanel() {
         <TabsList>
           <TabsTrigger value="users">{t('admin.userManagementTab')}</TabsTrigger>
           <TabsTrigger value="limits">{t('admin.defaultLimitsTab')}</TabsTrigger>
+          <TabsTrigger value="theme">
+            <Palette size={16} weight="bold" className="mr-2" />
+            {t('admin.themeTab')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
@@ -270,6 +275,10 @@ export function AdminPanel() {
 
         <TabsContent value="limits">
           <DefaultLimitsManager />
+        </TabsContent>
+
+        <TabsContent value="theme">
+          <ThemeManager />
         </TabsContent>
       </Tabs>
 
