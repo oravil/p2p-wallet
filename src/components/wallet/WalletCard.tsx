@@ -1,6 +1,5 @@
 import { WalletSummary } from '@/lib/types'
 import { useTranslation } from 'react-i18next'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -35,7 +34,7 @@ interface WalletCardProps {
   onEdit?: () => void
 }
 
-export function WalletCard({ summary, onEdit }: WalletCardProps) {
+export function WalletCard({ summary }: WalletCardProps) {
   const { t, i18n } = useTranslation()
   const { deleteWallet } = useWallets()
   const { deleteTransactionsByWallet, resetDailyTransactions, resetMonthlyTransactions } = useTransactions()
@@ -101,9 +100,17 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
 
   const getWalletIcon = () => {
     if (wallet.type === 'bank') {
-      return <Bank size={24} weight="fill" className="text-primary" />
+      return (
+        <div className="p-3 rounded-xl bg-linear-to-br from-blue-500 to-blue-600 shadow-lg">
+          <Bank size={24} weight="fill" className="text-white" />
+        </div>
+      )
     }
-    return <Wallet size={24} weight="fill" className="text-accent" />
+    return (
+      <div className="p-3 rounded-xl bg-linear-to-br from-purple-500 to-purple-600 shadow-lg">
+        <Wallet size={24} weight="fill" className="text-white" />
+      </div>
+    )
   }
 
   const getWalletTypeName = () => {
@@ -125,16 +132,14 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
 
   return (
     <>
-      <Card className={`hover:shadow-lg transition-shadow ${isAtRisk ? 'ring-2 ring-warning/30' : ''} ${isExceeded ? 'ring-2 ring-destructive/30' : ''}`}>
-        <CardHeader className="pb-3">
+      <div className={`card-glass ${isAtRisk ? 'ring-2 ring-orange-400/50' : ''} ${isExceeded ? 'ring-2 ring-red-400/50' : ''}`}>
+        <div className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-muted">
-                {getWalletIcon()}
-              </div>
+              {getWalletIcon()}
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <CardTitle className="text-lg">{wallet.accountName}</CardTitle>
+                  <h3 className="text-lg font-semibold text-gray-900">{wallet.accountName}</h3>
                   {getStatusBadge()}
                   {isExceeded && (
                     <Badge variant="destructive" className="gap-1 text-xs">
@@ -143,38 +148,38 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
                     </Badge>
                   )}
                   {isAtRisk && !isExceeded && (
-                    <Badge variant="outline" className="gap-1 text-xs border-warning text-warning">
+                    <span className="badge-warning">
                       <Warning size={12} weight="fill" />
                       {t('limits.warning')}
-                    </Badge>
+                    </span>
                   )}
                   {isLowRisk && !isAtRisk && !isExceeded && (
-                    <Badge variant="outline" className="gap-1 text-xs border-green-500 text-green-600 bg-green-50">
+                    <span className="badge-success">
                       <Warning size={12} weight="fill" />
                       {t('limits.lowRisk')}
-                    </Badge>
+                    </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground">{getWalletTypeName()}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{wallet.accountNumber}</p>
+                <p className="text-sm text-gray-600">{getWalletTypeName()}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{wallet.accountNumber}</p>
                 {wallet.note && (
-                  <div className="flex items-start gap-1 mt-1 text-xs text-muted-foreground bg-muted/50 p-1.5 rounded">
+                  <div className="flex items-start gap-1 mt-1 text-xs text-gray-600 bg-white/50 p-1.5 rounded">
                     <Article size={12} weight="fill" className="mt-0.5 shrink-0" />
                     <span className="line-clamp-2">{wallet.note}</span>
                   </div>
                 )}
-                <p className="text-lg font-bold text-primary mt-1">{formatCurrency(wallet.balance || 0, i18n.language)}</p>
+                <p className="text-lg font-bold text-gradient mt-1">{formatCurrency(wallet.balance || 0, i18n.language)}</p>
               </div>
             </div>
             <div className="flex gap-1 shrink-0">
-              <Button
-                size="sm"
+              <button
+                className="btn-modern text-sm px-3 py-2"
                 onClick={() => setShowAddTransaction(true)}
                 disabled={wallet.status !== 'active' && wallet.status !== undefined}
                 title={wallet.status && wallet.status !== 'active' ? `Account is ${wallet.status}` : 'Add Transaction'}
               >
                 <Plus size={16} weight="bold" />
-              </Button>
+              </button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button size="sm" variant="ghost">
@@ -202,19 +207,19 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               </DropdownMenu>
             </div>
           </div>
-        </CardHeader>
+        </div>
         
-        <CardContent className="space-y-4">
+        <div className="space-y-4 mt-4">
           <div className="space-y-3">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">{t('dashboard.dailyLimit')}</span>
+                <span className="text-sm font-medium text-gray-700">{t('dashboard.dailyLimit')}</span>
                 <span className={`text-sm font-semibold ${getLimitColor(dailyPercentage)}`}>
                   {dailyPercentage.toFixed(0)}%
                 </span>
               </div>
               <Progress value={dailyPercentage} className="h-2" indicatorClassName={getProgressColor(dailyPercentage)} />
-              <div className="flex items-center justify-between mt-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center justify-between mt-1.5 text-xs text-gray-500">
                 <span>{formatCurrency(dailyRemaining, i18n.language)} {t('dashboard.remaining')}</span>
                 <span>{formatCurrency(wallet.dailyLimit, i18n.language)}</span>
               </div>
@@ -227,25 +232,25 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">{t('dashboard.monthlyLimit')}</span>
+                <span className="text-sm font-medium text-gray-700">{t('dashboard.monthlyLimit')}</span>
                 <span className={`text-sm font-semibold ${getLimitColor(monthlyPercentage)}`}>
                   {monthlyPercentage.toFixed(0)}%
                 </span>
               </div>
               <Progress value={monthlyPercentage} className="h-2" indicatorClassName={getProgressColor(monthlyPercentage)} />
-              <div className="flex items-center justify-between mt-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center justify-between mt-1.5 text-xs text-gray-500">
                 <span>{formatCurrency(monthlyRemaining, i18n.language)} {t('dashboard.remaining')}</span>
                 <span>{formatCurrency(wallet.monthlyLimit, i18n.language)}</span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 pt-3 border-t">
+          <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/30">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowEditWallet(true)}
-              className="gap-1"
+              className="gap-1 bg-white/50 backdrop-blur-sm border-white/30 hover:bg-white/70"
             >
               <PencilSimple size={14} weight="bold" />
               <span className="hidden sm:inline">{t('wallet.edit')}</span>
@@ -254,32 +259,32 @@ export function WalletCard({ summary, onEdit }: WalletCardProps) {
               variant="outline"
               size="sm"
               onClick={() => setShowTransactionHistory(true)}
-              className="gap-1"
+              className="gap-1 bg-white/50 backdrop-blur-sm border-white/30 hover:bg-white/70"
             >
               <ClockCounterClockwise size={14} weight="bold" />
               <span className="hidden sm:inline">{t('transaction.history')}</span>
             </Button>
             <div className="col-span-1 grid grid-cols-2 gap-2">
               <div className="flex items-center gap-1">
-                <div className="p-1 rounded bg-red-50">
+                <div className="p-1 rounded bg-red-100">
                   <ArrowUp size={12} className="text-red-600" weight="bold" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold">{formatCurrency(summary.dailySent, i18n.language)}</p>
+                  <p className="text-xs font-semibold text-gray-700">{formatCurrency(summary.dailySent, i18n.language)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <div className="p-1 rounded bg-green-50">
+                <div className="p-1 rounded bg-green-100">
                   <ArrowDown size={12} className="text-green-600" weight="bold" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold">{formatCurrency(summary.dailyReceived, i18n.language)}</p>
+                  <p className="text-xs font-semibold text-gray-700">{formatCurrency(summary.dailyReceived, i18n.language)}</p>
                 </div>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <AddTransactionDialog
         open={showAddTransaction}

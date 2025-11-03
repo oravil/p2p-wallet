@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useKV } from '@github/spark/hooks'
 import { User, UserStatus, SubscriptionTier, Wallet, Transaction } from '@/lib/types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -139,73 +139,73 @@ export function AdminPanel() {
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">{t('admin.title')}</h1>
-        <Button variant="destructive" onClick={handleDeleteAllAccounts}>
+        <h1 className="text-3xl font-bold text-gradient">{t('admin.title')}</h1>
+        <button className="btn-modern bg-red-500 hover:bg-red-600" onClick={handleDeleteAllAccounts}>
           <Database size={18} weight="bold" className="mr-2" />
           {t('admin.deleteAllAccounts')}
-        </Button>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Users size={18} />
+        <div className="admin-card">
+          <div className="pb-3">
+            <h3 className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <Users size={18} className="text-blue-500" />
               {t('admin.totalUsers')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{totalUsers}</p>
-          </CardContent>
-        </Card>
+            </h3>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-gradient">{totalUsers}</p>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <ChartBar size={18} />
+        <div className="admin-card">
+          <div className="pb-3">
+            <h3 className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <ChartBar size={18} className="text-green-500" />
               {t('admin.activeUsers')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </h3>
+          </div>
+          <div>
             <p className="text-3xl font-bold text-green-600">{activeUsers}</p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Crown size={18} weight="fill" />
+        <div className="admin-card">
+          <div className="pb-3">
+            <h3 className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <Crown size={18} weight="fill" className="text-yellow-500" />
               {t('admin.proUsers')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-accent">{proUsers}</p>
-          </CardContent>
-        </Card>
+            </h3>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-yellow-600">{proUsers}</p>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <WalletIcon size={18} />
+        <div className="admin-card">
+          <div className="pb-3">
+            <h3 className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <WalletIcon size={18} className="text-purple-500" />
               {t('admin.totalWallets')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{totalWallets}</p>
-          </CardContent>
-        </Card>
+            </h3>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-purple-600">{totalWallets}</p>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <ArrowsLeftRight size={18} />
+        <div className="admin-card">
+          <div className="pb-3">
+            <h3 className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <ArrowsLeftRight size={18} className="text-indigo-500" />
               {t('admin.totalTransactions')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{totalTransactions}</p>
-          </CardContent>
-        </Card>
+            </h3>
+          </div>
+          <div>
+            <p className="text-3xl font-bold text-indigo-600">{totalTransactions}</p>
+          </div>
+        </div>
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
@@ -219,11 +219,11 @@ export function AdminPanel() {
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('admin.userManagement')}</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="admin-card">
+            <div className="border-b border-gray-200 pb-4 mb-6">
+              <h2 className="text-xl font-semibold text-gradient">{t('admin.userManagement')}</h2>
+            </div>
+            <div>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -252,6 +252,7 @@ export function AdminPanel() {
                             variant="outline"
                             onClick={() => handleEditUser(user)}
                             disabled={user.id === currentUser?.id}
+                            className="bg-white/50 backdrop-blur-sm border-white/30 hover:bg-white/70"
                           >
                             <UserGear size={16} weight="bold" />
                           </Button>
@@ -260,6 +261,7 @@ export function AdminPanel() {
                             variant="outline"
                             onClick={() => handleDeleteUser(user)}
                             disabled={user.id === currentUser?.id}
+                            className="bg-white/50 backdrop-blur-sm border-white/30 hover:bg-white/70"
                           >
                             <Trash size={16} weight="bold" />
                           </Button>
@@ -269,8 +271,8 @@ export function AdminPanel() {
                   ))}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="limits">
