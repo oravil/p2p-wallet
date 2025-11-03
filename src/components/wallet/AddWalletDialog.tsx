@@ -12,6 +12,7 @@ import { useKV } from '@github/spark/hooks'
 import { DefaultLimits, INITIAL_DEFAULT_LIMITS } from '@/lib/defaults'
 import { toast } from 'sonner'
 import { generateAccountMask, normalizePhoneNumber } from '@/lib/utils'
+import { sanitizeText, sanitizePhoneNumber, sanitizeNumericInput } from '@/lib/sanitize'
 
 interface AddWalletDialogProps {
   open: boolean
@@ -60,9 +61,17 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const balance = parseFloat(formData.balance) || 0
-    const dailyLimit = parseFloat(formData.dailyLimit)
-    const monthlyLimit = parseFloat(formData.monthlyLimit)
+    // Sanitize all inputs
+    const sanitizedAccountNumber = sanitizePhoneNumber(formData.accountNumber)
+    const sanitizedAccountName = sanitizeText(formData.accountName, 50)
+    const sanitizedBankName = sanitizeText(formData.bankName, 50)
+    const sanitizedBalance = sanitizeNumericInput(formData.balance)
+    const sanitizedDailyLimit = sanitizeNumericInput(formData.dailyLimit)
+    const sanitizedMonthlyLimit = sanitizeNumericInput(formData.monthlyLimit)
+
+    const balance = parseFloat(sanitizedBalance) || 0
+    const dailyLimit = parseFloat(sanitizedDailyLimit)
+    const monthlyLimit = parseFloat(sanitizedMonthlyLimit)
 
     if (isNaN(dailyLimit) || dailyLimit <= 0 || isNaN(monthlyLimit) || monthlyLimit <= 0) {
       toast.error('Invalid limits')
@@ -74,10 +83,11 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       return
     }
 
-    const normalizedNumber = normalizePhoneNumber(formData.accountNumber)
+    const normalizedNumber = normalizePhoneNumber(sanitizedAccountNumber)
     
-    if (normalizedNumber.length < 10) {
-      toast.error('Phone number must be at least 10 digits')
+    // Egyptian mobile numbers should be 11 digits (e.g., 01012345678)
+    if (normalizedNumber.length < 11) {
+      toast.error('Egyptian mobile number must be 11 digits (e.g., 01012345678)')
       return
     }
 
@@ -90,13 +100,13 @@ export function AddWalletDialog({ open, onOpenChange }: AddWalletDialogProps) {
       return
     }
 
-    const accountName = formData.accountName.trim() || generateAccountMask(formData.accountNumber, formData.type)
+    const accountName = sanitizedAccountName.trim() || generateAccountMask(sanitizedAccountNumber, formData.type)
 
     addWallet({
       type: formData.type,
-      accountNumber: formData.accountNumber,
+      accountNumber: sanitizedAccountNumber,
       accountName,
-      bankName: formData.type === 'bank' ? formData.bankName : undefined,
+      bankName: formData.type === 'bank' ? sanitizedBankName : undefined,
       balance,
       dailyLimit,
       monthlyLimit

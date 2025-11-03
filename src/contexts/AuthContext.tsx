@@ -2,19 +2,21 @@ import { createContext, useContext, ReactNode, useEffect, useState } from 'react
 import { User } from '@/lib/types'
 import { useKV } from '@github/spark/hooks'
 import { generateId } from '@/lib/utils'
+import bcrypt from 'bcryptjs'
 
 interface AuthContextType {
   user: User | null
   login: (email: string, password: string) => Promise<{ success: boolean; mustChangePassword?: boolean }>
-  changePassword: (newPassword: string) => void
+  changePassword: (newPassword: string) => Promise<void>
   logout: () => void
   isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const DEFAULT_ADMIN_EMAIL = 'eng.ay88@gmail.com'
-const DEFAULT_ADMIN_PASSWORD = 'adminadmin'
+// Use environment variables with fallbacks for development
+const DEFAULT_ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'eng.ay88@gmail.com'
+const DEFAULT_ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'SecureAdmin123!'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useKV<User | null>('currentUser', null)
@@ -24,10 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAdmin = async () => {
       if (!users || users.length === 0) {
+        // Hash the default admin password
+        const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10)
+        
         const adminUser: User = {
           id: generateId(),
           email: DEFAULT_ADMIN_EMAIL,
-          password: DEFAULT_ADMIN_PASSWORD,
+          password: hashedPassword,
           fullName: 'Administrator',
           role: 'admin',
           status: 'active',
@@ -44,18 +49,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (email: string, password: string): Promise<{ success: boolean; mustChangePassword?: boolean }> => {
-    const foundUser = users?.find(u => u.email === email && u.password === password)
+    const foundUser = users?.find(u => u.email === email)
     if (foundUser) {
-      setUser(foundUser)
-      return { success: true, mustChangePassword: foundUser.mustChangePassword }
+      // Compare hashed password
+      const isValidPassword = await bcrypt.compare(password, foundUser.password)
+      if (isValidPassword) {
+        setUser(foundUser)
+        return { success: true, mustChangePassword: foundUser.mustChangePassword }
+      }
     }
     return { success: false }
   }
 
-  const changePassword = (newPassword: string) => {
+  const changePassword = async (newPassword: string) => {
     if (!user) return
     
-    const updatedUser = { ...user, password: newPassword, mustChangePassword: false }
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    const updatedUser = { ...user, password: hashedPassword, mustChangePassword: false }
     setUser(updatedUser)
     setUsers(current => 
       (current || []).map(u => u.id === user.id ? updatedUser : u)
