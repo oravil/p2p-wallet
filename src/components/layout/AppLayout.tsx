@@ -316,3 +316,26 @@ export function AppLayout({
     </div>
   )
 }
+
+            <div className="flex items-center justify-between p-4">
+              <SidebarNav
+                activeTab={activeTab}
+                onTabChange={onTabChange}
+                userRole={userRole}
+                onLogout={onLogout}
+                onToggleLanguage={onToggleLanguage}
+                userName={userName}
+              />
+              <h1 className="text-lg font-bold">{t('app.title')}</h1>
+              <div className="w-10" />
+            </div>
+          </header>
+        )}
+        
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}
