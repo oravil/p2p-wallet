@@ -2,7 +2,7 @@ import { useKV } from '@github/spark/hooks'
 import { Wallet, Transaction, WalletSummary } from '@/lib/types'
 import { calculateWalletSummary } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 
 export function useWallets() {
   const { user } = useAuth()
@@ -51,40 +51,86 @@ export function useWallets() {
 export function useTransactions(walletId?: string) {
   const [allTransactions, setAllTransactions] = useKV<Transaction[]>('transactions', [])
   const [allWallets, setAllWallets] = useKV<Wallet[]>('wallets', [])
+  const [transactionQueue, setTransactionQueue] = useState<Array<() => Promise<void>>>([])
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const transactions = useMemo(() => {
     const txs = allTransactions || []
     return walletId ? txs.filter(t => t.walletId === walletId) : txs
   }, [allTransactions, walletId])
 
-  const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt'>, wallet?: Wallet) => {
-    if (wallet && (transaction.type === 'send' || transaction.type === 'withdraw')) {
-      const currentBalance = wallet.balance || 0
-      if (currentBalance < transaction.amount) {
-        throw new Error('Insufficient balance. Cannot send/withdraw amount greater than current balance.')
+  // Process transaction queue sequentially to avoid race conditions
+  useEffect(() => {
+    const processQueue = async () => {
+      if (isProcessing || transactionQueue.length === 0) return
+      
+      setIsProcessing(true)
+      try {
+        const nextTransaction = transactionQueue[0]
+        await nextTransaction()
+        setTransactionQueue(prev => prev.slice(1))
+      } catch (error) {
+        console.error('Transaction processing error:', error)
+        setTransactionQueue(prev => prev.slice(1))
+        throw error
+      } finally {
+        setIsProcessing(false)
       }
     }
 
-    const newTransaction: Transaction = {
-      ...transaction,
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      createdAt: new Date().toISOString()
-    }
+    processQueue()
+  }, [transactionQueue, isProcessing])
 
-    setAllTransactions(current => [...(current || []), newTransaction])
+  const addTransaction = (transaction: Omit<Transaction, 'id' | 'createdAt'>, wallet?: Wallet) => {
+    return new Promise<void>((resolve, reject) => {
+      const processTransaction = async () => {
+        try {
+          // Get the latest wallet data to check balance
+          const currentWallets = allWallets || []
+          const currentWallet = currentWallets.find(w => w.id === transaction.walletId)
+          
+          if (!currentWallet) {
+            throw new Error('Wallet not found')
+          }
 
-    setAllWallets(current => {
-      const wallets = current || []
-      return wallets.map(w => {
-        if (w.id === transaction.walletId) {
-          const currentBalance = w.balance || 0
-          const balanceChange = transaction.type === 'receive' 
-            ? transaction.amount 
-            : -transaction.amount
-          return { ...w, balance: currentBalance + balanceChange }
+          // Check balance for send/withdraw operations
+          if (transaction.type === 'send' || transaction.type === 'withdraw') {
+            const currentBalance = currentWallet.balance || 0
+            if (currentBalance < transaction.amount) {
+              throw new Error('Insufficient balance. Cannot send/withdraw amount greater than current balance.')
+            }
+          }
+
+          const newTransaction: Transaction = {
+            ...transaction,
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            createdAt: new Date().toISOString()
+          }
+
+          // Atomic update: add transaction and update wallet balance
+          setAllTransactions(current => [...(current || []), newTransaction])
+
+          setAllWallets(current => {
+            const wallets = current || []
+            return wallets.map(w => {
+              if (w.id === transaction.walletId) {
+                const currentBalance = w.balance || 0
+                const balanceChange = transaction.type === 'receive' 
+                  ? transaction.amount 
+                  : -transaction.amount
+                return { ...w, balance: currentBalance + balanceChange }
+              }
+              return w
+            })
+          })
+
+          resolve()
+        } catch (error) {
+          reject(error)
         }
-        return w
-      })
+      }
+
+      setTransactionQueue(prev => [...prev, processTransaction])
     })
   }
 
