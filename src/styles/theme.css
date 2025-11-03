@@ -1,81 +1,22 @@
 @import "tailwindcss";
 
-@import '@radix-ui/colors/sage-dark.css' layer(base);
-@import '@radix-ui/colors/olive.css' layer(base);
-@import '@radix-ui/colors/olive-dark.css' layer(base);
-@import '@radix-ui/colors/sand.css' layer(base);
-@import '@radix-ui/colors/sand-dark.css' layer(base);
-@import '@radix-ui/colors/red.css' layer(base);
-@import '@radix-ui/colors/red-dark.css' layer(base);
-@import '@radix-ui/colors/ruby.css' layer(base);
-@import '@radix-ui/colors/ruby-dark.css' layer(base);
-@import '@radix-ui/colors/crimson.css' layer(base);
-@import '@radix-ui/colors/crimson-dark.css' layer(base);
-@import '@radix-ui/colors/pink.css' layer(base);
-@import '@radix-ui/colors/pink-dark.css' layer(base);
-@import '@radix-ui/colors/plum.css' layer(base);
-@import '@radix-ui/colors/plum-dark.css' layer(base);
-@import '@radix-ui/colors/purple.css' layer(base);
-@import '@radix-ui/colors/purple-dark.css' layer(base);
-@import '@radix-ui/colors/violet.css' layer(base);
-@import '@radix-ui/colors/violet-dark.css' layer(base);
-@import '@radix-ui/colors/iris.css' layer(base);
-@import '@radix-ui/colors/iris-dark.css' layer(base);
-@import '@radix-ui/colors/indigo.css' layer(base);
-@import '@radix-ui/colors/indigo-dark.css' layer(base);
-@import '@radix-ui/colors/blue.css' layer(base);
-@import '@radix-ui/colors/blue-dark.css' layer(base);
-@import '@radix-ui/colors/cyan.css' layer(base);
-@import '@radix-ui/colors/cyan-dark.css' layer(base);
-@import '@radix-ui/colors/teal.css' layer(base);
-@import '@radix-ui/colors/teal-dark.css' layer(base);
-@import '@radix-ui/colors/jade.css' layer(base);
-@import '@radix-ui/colors/jade-dark.css' layer(base);
-@import '@radix-ui/colors/green.css' layer(base);
-@import '@radix-ui/colors/green-dark.css' layer(base);
-@import '@radix-ui/colors/grass.css' layer(base);
-@import '@radix-ui/colors/grass-dark.css' layer(base);
-@import '@radix-ui/colors/bronze.css' layer(base);
-@import '@radix-ui/colors/bronze-dark.css' layer(base);
-@import '@radix-ui/colors/gold.css' layer(base);
-@import '@radix-ui/colors/gold-dark.css' layer(base);
-@import '@radix-ui/colors/brown.css' layer(base);
-@import '@radix-ui/colors/brown-dark.css' layer(base);
-@import '@radix-ui/colors/orange.css' layer(base);
-@import '@radix-ui/colors/orange-dark.css' layer(base);
-@import '@radix-ui/colors/amber.css' layer(base);
-@import '@radix-ui/colors/amber-dark.css' layer(base);
-@import '@radix-ui/colors/yellow.css' layer(base);
-@import '@radix-ui/colors/yellow-dark.css' layer(base);
-@import '@radix-ui/colors/lime.css' layer(base);
-@import '@radix-ui/colors/lime-dark.css' layer(base);
-@import '@radix-ui/colors/mint.css' layer(base);
-@import '@radix-ui/colors/mint-dark.css' layer(base);
-@import '@radix-ui/colors/sky.css' layer(base);
-@import '@radix-ui/colors/sky-dark.css' layer(base);
-@import '@radix-ui/colors/tomato.css' layer(base);
-@import '@radix-ui/colors/tomato-dark.css' layer(base);
-@import '@radix-ui/colors/gray.css' layer(base);
-@import '@radix-ui/colors/gray-dark.css' layer(base);
-@import '@radix-ui/colors/mauve.css' layer(base);
-@import '@radix-ui/colors/mauve-dark.css' layer(base);
 @import '@radix-ui/colors/slate.css' layer(base);
 @import '@radix-ui/colors/slate-dark.css' layer(base);
-@import '@radix-ui/colors/slate-alpha.css' layer(base);
-@import '@radix-ui/colors/slate-dark-alpha.css' layer(base);
+@import '@radix-ui/colors/blue.css' layer(base);
+@import '@radix-ui/colors/blue-dark.css' layer(base);
+@import '@radix-ui/colors/green.css' layer(base);
+@import '@radix-ui/colors/green-dark.css' layer(base);
+@import '@radix-ui/colors/red.css' layer(base);
+@import '@radix-ui/colors/red-dark.css' layer(base);
+@import '@radix-ui/colors/orange.css' layer(base);
+@import '@radix-ui/colors/orange-dark.css' layer(base);
+@import '@radix-ui/colors/purple.css' layer(base);
+@import '@radix-ui/colors/purple-dark.css' layer(base);
 
 @import 'tailwindcss/theme' layer(theme);
-
 @import 'tailwindcss/preflight' layer(base);
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+/* Enhanced border compatibility */
 @layer base {
   *,
   ::after,
@@ -88,6 +29,7 @@
 
 @layer base {
   #spark-app {
+    /* Enhanced color contrasts for better accessibility */
     --tomato-contrast: #fff;
     --red-contrast: #fff;
     --ruby-contrast: #fff;
@@ -120,16 +62,7 @@
     --olive-contrast: #fff;
     --sand-contrast: #fff;
 
-    /**
-   * Spacing scale
-   *
-   * These variables define a spacing scale based on Tailwind's default.
-   * We've introduced a --size-scale variable as a multiplier.
-   * By adjusting this single value, we can proportionally
-   * scale all spacing throughout the entire application.
-   *
-   * https://tailwindcss.com/docs/customizing-spacing#default-spacing-scale
-   */
+    /* Responsive spacing scale with improved mobile scaling */
     --size-scale: 1;
     --size-0: 0px;
     --size-px: 1px;
@@ -167,16 +100,16 @@
     --size-80: calc(20rem * var(--size-scale));
     --size-96: calc(24rem * var(--size-scale));
 
-    /* Border radii */
+    /* Professional border radius system */
     --radius-factor: 1;
-    --radius-sm: calc(2px * var(--radius-factor) * var(--size-scale));
-    --radius-md: calc(6px * var(--radius-factor) * var(--size-scale));
-    --radius-lg: calc(8px * var(--radius-factor) * var(--size-scale));
-    --radius-xl: calc(12px * var(--radius-factor) * var(--size-scale));
-    --radius-2xl: calc(16px * var(--radius-factor) * var(--size-scale));
+    --radius-sm: calc(4px * var(--radius-factor) * var(--size-scale));
+    --radius-md: calc(8px * var(--radius-factor) * var(--size-scale));
+    --radius-lg: calc(12px * var(--radius-factor) * var(--size-scale));
+    --radius-xl: calc(16px * var(--radius-factor) * var(--size-scale));
+    --radius-2xl: calc(20px * var(--radius-factor) * var(--size-scale));
     --radius-full: 9999px;
 
-    /* Neutral colors */
+    /* Professional financial theme colors */
     --color-neutral-1: var(--slate-1);
     --color-neutral-2: var(--slate-2);
     --color-neutral-3: var(--slate-3);
@@ -203,7 +136,7 @@
     --color-neutral-a12: var(--slate-a12);
     --color-neutral-contrast: var(--slate-contrast);
 
-    /* Accent colors */
+    /* Primary accent - Professional Blue */
     --color-accent-1: var(--blue-1);
     --color-accent-2: var(--blue-2);
     --color-accent-3: var(--blue-3);
@@ -218,45 +151,154 @@
     --color-accent-12: var(--blue-12);
     --color-accent-contrast: var(--blue-contrast);
 
-    /* Secondary accent colors */
-    --color-accent-secondary-1: var(--violet-1);
-    --color-accent-secondary-2: var(--violet-2);
-    --color-accent-secondary-3: var(--violet-3);
-    --color-accent-secondary-4: var(--violet-4);
-    --color-accent-secondary-5: var(--violet-5);
-    --color-accent-secondary-6: var(--violet-6);
-    --color-accent-secondary-7: var(--violet-7);
-    --color-accent-secondary-8: var(--violet-8);
-    --color-accent-secondary-9: var(--violet-9);
-    --color-accent-secondary-10: var(--violet-10);
-    --color-accent-secondary-11: var(--violet-11);
-    --color-accent-secondary-12: var(--violet-12);
-    --color-accent-secondary-contrast: var(--violet-contrast);
+    /* Secondary accent - Emerald for success states */
+    --color-accent-secondary-1: var(--green-1);
+    --color-accent-secondary-2: var(--green-2);
+    --color-accent-secondary-3: var(--green-3);
+    --color-accent-secondary-4: var(--green-4);
+    --color-accent-secondary-5: var(--green-5);
+    --color-accent-secondary-6: var(--green-6);
+    --color-accent-secondary-7: var(--green-7);
+    --color-accent-secondary-8: var(--green-8);
+    --color-accent-secondary-9: var(--green-9);
+    --color-accent-secondary-10: var(--green-10);
+    --color-accent-secondary-11: var(--green-11);
+    --color-accent-secondary-12: var(--green-12);
+    --color-accent-secondary-contrast: var(--green-contrast);
 
-    /* Foreground colors */
+    /* Typography colors */
     --color-fg: var(--color-neutral-12);
     --color-fg-secondary: var(--color-neutral-a11);
+    --color-fg-tertiary: var(--color-neutral-a9);
 
-    /* Background colors */
+    /* Background system */
     --color-bg: #ffffff;
+    --color-bg-subtle: var(--color-neutral-1);
     --color-bg-inset: var(--color-neutral-2);
     --color-bg-overlay: #ffffff;
+    --color-bg-elevated: #ffffff;
 
-    /* Focus ring */
+    /* Enhanced focus ring */
     --color-focus-ring: var(--color-accent-9);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
 
-    /* Fonts */
-    --font-sans-serif: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* Professional typography stack */
+    --font-sans-serif: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-arabic: "Cairo", "Tajawal", ui-sans-serif, system-ui, sans-serif;
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-    --font-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-      "Liberation Mono", "Courier New", monospace;
+    --font-monospace: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --font-family: var(--font-sans-serif);
+
+    /* Enhanced shadows for depth */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Animation timings */
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 350ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
+  /* Dark theme support */
   #spark-app.dark-theme {
     --color-bg: var(--color-neutral-1);
+    --color-bg-subtle: var(--color-neutral-2);
     --color-bg-inset: #000000;
     --color-bg-overlay: var(--color-neutral-3);
+    --color-bg-elevated: var(--color-neutral-3);
+    --color-fg: var(--color-neutral-1);
+    --color-fg-secondary: var(--color-neutral-a10);
+    --color-fg-tertiary: var(--color-neutral-a8);
+  }
+
+  /* Enhanced responsive typography */
+  @media (max-width: 768px) {
+    #spark-app {
+      --size-scale: 0.9;
+      --radius-factor: 0.8;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #spark-app {
+      --size-scale: 1.1;
+    }
+  }
+
+  /* Arabic/RTL typography support */
+  [dir="rtl"] #spark-app {
+    --font-family: var(--font-arabic);
+  }
+
+  /* Enhanced focus states for accessibility */
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Smooth transitions for theme changes */
+  * {
+    transition: background-color var(--duration-normal) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out),
+                color var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out);
+  }
+
+  /* Professional card elevation system */
+  .card-elevated {
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-elevated:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+
+  /* Financial data table enhancements */
+  .financial-table {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Loading skeleton animation */
+  @keyframes skeleton-loading {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--color-neutral-3) 0px, var(--color-neutral-2) 40px, var(--color-neutral-3) 80px);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.5s infinite;
+  }
+
+  /* Enhanced button hover states */
+  .button-primary {
+    background: var(--color-accent-9);
+    color: var(--color-accent-contrast);
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .button-primary:hover {
+    background: var(--color-accent-10);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .button-primary:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
   }
 }

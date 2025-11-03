@@ -12,18 +12,33 @@ try {
 } catch (err) {
   console.error('failed to parse custom styles', err)
 }
+
 const defaultTheme = {
   container: {
     center: true,
-    padding: "2rem",
+    padding: {
+      DEFAULT: "1rem",
+      sm: "1.5rem",
+      lg: "2rem",
+      xl: "2.5rem",
+      "2xl": "3rem",
+    },
+    screens: {
+      "2xl": "1400px",
+    },
   },
   extend: {
     screens: {
+      xs: "375px",
       coarse: { raw: "(pointer: coarse)" },
       fine: { raw: "(pointer: fine)" },
       pwa: { raw: "(display-mode: standalone)" },
+      "hover-hover": { raw: "(hover: hover)" },
+      "touch": { raw: "(pointer: coarse)" },
+      "high-res": { raw: "(min-resolution: 2dppx)" },
     },
     colors: {
+      // Enhanced neutral palette
       neutral: {
         1: "var(--color-neutral-1)",
         2: "var(--color-neutral-2)",
@@ -51,6 +66,7 @@ const defaultTheme = {
         a12: "var(--color-neutral-a12)",
         contrast: "var(--color-neutral-contrast)",
       },
+      // Professional accent colors
       accent: {
         1: "var(--color-accent-1)",
         2: "var(--color-accent-2)",
@@ -81,14 +97,19 @@ const defaultTheme = {
         12: "var(--color-accent-secondary-12)",
         contrast: "var(--color-accent-secondary-contrast)",
       },
+      // Typography colors
       fg: {
         DEFAULT: "var(--color-fg)",
         secondary: "var(--color-fg-secondary)",
+        tertiary: "var(--color-fg-tertiary)",
       },
+      // Background system
       bg: {
         DEFAULT: "var(--color-bg)",
+        subtle: "var(--color-bg-subtle)",
         inset: "var(--color-bg-inset)",
         overlay: "var(--color-bg-overlay)",
+        elevated: "var(--color-bg-elevated)",
       },
       "focus-ring": "var(--color-focus-ring)",
     },
@@ -99,6 +120,58 @@ const defaultTheme = {
       xl: "var(--radius-xl)",
       "2xl": "var(--radius-2xl)",
       full: "var(--radius-full)",
+    },
+    boxShadow: {
+      sm: "var(--shadow-sm)",
+      md: "var(--shadow-md)",
+      lg: "var(--shadow-lg)",
+      xl: "var(--shadow-xl)",
+    },
+    animation: {
+      "fade-in": "fade-in var(--duration-normal) var(--ease-out)",
+      "slide-up": "slide-up var(--duration-normal) var(--ease-out)",
+      "scale-in": "scale-in var(--duration-fast) var(--ease-bounce)",
+      "skeleton": "skeleton-loading 1.5s infinite",
+    },
+    keyframes: {
+      "fade-in": {
+        "0%": { opacity: "0" },
+        "100%": { opacity: "1" },
+      },
+      "slide-up": {
+        "0%": { transform: "translateY(10px)", opacity: "0" },
+        "100%": { transform: "translateY(0)", opacity: "1" },
+      },
+      "scale-in": {
+        "0%": { transform: "scale(0.95)", opacity: "0" },
+        "100%": { transform: "scale(1)", opacity: "1" },
+      },
+    },
+    fontFamily: {
+      sans: ["var(--font-sans-serif)"],
+      arabic: ["var(--font-arabic)"],
+      serif: ["var(--font-serif)"],
+      mono: ["var(--font-monospace)"],
+    },
+    fontSize: {
+      xs: ["0.75rem", { lineHeight: "1.5", letterSpacing: "0.025em" }],
+      sm: ["0.875rem", { lineHeight: "1.5", letterSpacing: "0.01em" }],
+      base: ["1rem", { lineHeight: "1.6", letterSpacing: "0" }],
+      lg: ["1.125rem", { lineHeight: "1.5", letterSpacing: "-0.01em" }],
+      xl: ["1.25rem", { lineHeight: "1.4", letterSpacing: "-0.02em" }],
+      "2xl": ["1.5rem", { lineHeight: "1.3", letterSpacing: "-0.03em" }],
+      "3xl": ["1.875rem", { lineHeight: "1.2", letterSpacing: "-0.04em" }],
+      "4xl": ["2.25rem", { lineHeight: "1.1", letterSpacing: "-0.05em" }],
+    },
+    transitionDuration: {
+      fast: "var(--duration-fast)",
+      normal: "var(--duration-normal)",
+      slow: "var(--duration-slow)",
+    },
+    transitionTimingFunction: {
+      "ease-out": "var(--ease-out)",
+      "ease-in": "var(--ease-in)",
+      "ease-bounce": "var(--ease-bounce)",
     },
   },
   spacing: {
@@ -138,7 +211,7 @@ const defaultTheme = {
     80: "var(--size-80)",
     96: "var(--size-96)",
   },
-  darkMode: ["selector", '[data-appearance="dark"]'],
+  darkMode: ["class"],
 }
 
 export default {
