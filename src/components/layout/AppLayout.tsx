@@ -18,8 +18,10 @@ interface SidebarNavProps {
 }
 
 export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggleLanguage, userName }: SidebarNavProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const isMobile = useIsMobile()
+  const [open, setOpen] = useState(false)
+  const isRTL = i18n.language === 'ar'
 
   const navItems = [
     {
@@ -48,30 +50,44 @@ export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggl
     }
   ].filter(item => item.show)
 
+  const handleTabChange = (tab: string) => {
+    onTabChange(tab)
+    setOpen(false)
+  }
+
+  const handleLogout = () => {
+    setOpen(false)
+    onLogout()
+  }
+
+  const handleToggleLanguage = () => {
+    onToggleLanguage()
+  }
+
   const NavContent = () => (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b">
-        <h2 className="text-xl font-bold">{t('app.title')}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{userName}</p>
+        <h2 className="text-xl font-bold truncate">{t('app.title')}</h2>
+        <p className="text-sm text-muted-foreground mt-1 truncate">{userName}</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon
           return (
             <button
               key={item.id}
-              onClick={() => onTabChange(item.id)}
+              onClick={() => handleTabChange(item.id)}
               className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all',
-                'hover:bg-accent hover:text-accent-foreground',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
+                'hover:bg-accent hover:text-accent-foreground active:scale-95',
                 activeTab === item.id
-                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  ? 'bg-primary text-primary-foreground shadow-md'
                   : 'text-muted-foreground'
               )}
             >
-              <Icon size={20} weight="bold" />
-              <span className="font-medium">{item.label}</span>
+              <Icon size={22} weight="bold" />
+              <span className="font-medium text-base">{item.label}</span>
             </button>
           )
         })}
@@ -80,22 +96,22 @@ export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggl
       <div className="p-4 border-t space-y-2">
         <Button
           variant="outline"
-          className="w-full justify-start gap-3"
-          onClick={onToggleLanguage}
+          className="w-full justify-start gap-3 h-12"
+          onClick={handleToggleLanguage}
         >
-          <Translate size={20} weight="bold" />
-          <span>{t('common.language')}</span>
+          <Translate size={22} weight="bold" />
+          <span className="text-base">{t('common.language')}</span>
         </Button>
 
         <Separator className="my-2" />
 
         <Button
           variant="outline"
-          className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={onLogout}
+          className="w-full justify-start gap-3 h-12 text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={handleLogout}
         >
-          <SignOut size={20} weight="bold" />
-          <span>{t('auth.logout')}</span>
+          <SignOut size={22} weight="bold" />
+          <span className="text-base">{t('auth.logout')}</span>
         </Button>
       </div>
     </div>
@@ -103,13 +119,13 @@ export function SidebarNav({ activeTab, onTabChange, userRole, onLogout, onToggl
 
   if (isMobile) {
     return (
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0">
-            <List size={20} weight="bold" />
+          <Button variant="outline" size="icon" className="shrink-0 h-10 w-10">
+            <List size={22} weight="bold" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-[280px]">
+        <SheetContent side={isRTL ? "right" : "left"} className="p-0 w-[85vw] max-w-[320px]">
           <NavContent />
         </SheetContent>
       </Sheet>
@@ -291,10 +307,10 @@ export function AppLayout({
         </aside>
       )}
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {isMobile && (
-          <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-10 shadow-sm">
-            <div className="flex items-center justify-between p-4">
+          <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+            <div className="flex items-center justify-between gap-3 p-4">
               <SidebarNav
                 activeTab={activeTab}
                 onTabChange={onTabChange}
@@ -303,7 +319,7 @@ export function AppLayout({
                 onToggleLanguage={onToggleLanguage}
                 userName={userName}
               />
-              <h1 className="text-lg font-bold">{t('app.title')}</h1>
+              <h1 className="text-lg font-bold truncate flex-1 text-center">{t('app.title')}</h1>
               <div className="w-10" />
             </div>
           </header>
