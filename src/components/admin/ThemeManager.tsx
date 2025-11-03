@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
-import { Palette, ArrowCounterClockwise, Check, Moon, Sun, Sparkles, Brush, Wand } from '@phosphor-icons/react'
+import { Palette, ArrowCounterClockwise, Check, Moon, Sun, Sparkle, PaintBrush, MagicWand } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { AppTheme } from '@/lib/types'
 
@@ -244,7 +244,7 @@ export function ThemeManager() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles size={20} weight="bold" />
+            <Sparkle size={20} weight="bold" />
             Current Theme Preview
           </CardTitle>
         </CardHeader>
@@ -316,11 +316,11 @@ export function ThemeManager() {
             Preset Themes
           </TabsTrigger>
           <TabsTrigger value="custom">
-            <Brush size={16} className="mr-2" />
+            <PaintBrush size={16} className="mr-2" />
             Custom Colors
           </TabsTrigger>
           <TabsTrigger value="advanced">
-            <Wand size={16} className="mr-2" />
+            <MagicWand size={16} className="mr-2" />
             Advanced
           </TabsTrigger>
         </TabsList>
