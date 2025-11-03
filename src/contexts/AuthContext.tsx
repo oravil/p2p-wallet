@@ -2,7 +2,7 @@ import { createContext, useContext, ReactNode, useEffect, useState } from 'react
 import { User } from '@/lib/types'
 import { useKV } from '@github/spark/hooks'
 import { generateId } from '@/lib/utils'
-import bcrypt from 'bcryptjs'
+import * as crypto from '@/lib/crypto'
 
 interface AuthContextType {
   user: User | null
@@ -26,8 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAdmin = async () => {
       if (!users || users.length === 0) {
-        // Hash the default admin password
-        const hashedPassword = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10)
+        const hashedPassword = await crypto.hash(DEFAULT_ADMIN_PASSWORD, 10)
         
         const adminUser: User = {
           id: generateId(),
@@ -51,8 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; mustChangePassword?: boolean }> => {
     const foundUser = users?.find(u => u.email === email)
     if (foundUser) {
-      // Compare hashed password
-      const isValidPassword = await bcrypt.compare(password, foundUser.password)
+      const isValidPassword = await crypto.compare(password, foundUser.password)
       if (isValidPassword) {
         setUser(foundUser)
         return { success: true, mustChangePassword: foundUser.mustChangePassword }
@@ -64,8 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const changePassword = async (newPassword: string) => {
     if (!user) return
     
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    const hashedPassword = await crypto.hash(newPassword, 10)
     const updatedUser = { ...user, password: hashedPassword, mustChangePassword: false }
     setUser(updatedUser)
     setUsers(current => 

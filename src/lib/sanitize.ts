@@ -1,5 +1,3 @@
-import DOMPurify from 'dompurify'
-
 /**
  * Sanitize user input to prevent XSS attacks
  * @param input - Raw user input
@@ -10,11 +8,9 @@ export function sanitizeInput(input: string): string {
     return ''
   }
 
-  // Remove any HTML tags and dangerous content
-  return DOMPurify.sanitize(input, { 
-    ALLOWED_TAGS: [], // No HTML tags allowed
-    ALLOWED_ATTR: [] // No attributes allowed
-  }).trim()
+  const div = document.createElement('div')
+  div.textContent = input
+  return div.innerHTML.trim()
 }
 
 /**
